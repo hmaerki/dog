@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Test jQuery</title>
+
+  <!-- http://code.jquery.com/jquery/ -->
+  <script
+    src="http://code.jquery.com/jquery-3.5.1.js"
+    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+      <ul id="messages"></ul>
+      <p id="time">The time</p>
+      <table>
+        <tr>
+          <td colspan="6" style="font-size: 0.5em; text-align: left;">Donald played King /
+            Donald presses "Become next player" / Carla played 3</td>
+        </tr>
+        <tr>
+          <td><p id="player0_card" name="0">...</p></td>
+          <td><p id="player0_card" name="1">...</p></td>
+        </tr>
+        <tr>
+          <td><button id="player0_playCard" name="0" disabled>Spielen</button></td>
+          <td><button id="player0_playCard" name="1" disabled>Spielen</button></td>
+        </tr>
+
+        <tr>
+          <td><button id="player0_changeCard" name="0" disabled>Tauschen</button></td>
+          <td><button id="player0_changeCard" name="1" disabled>Tauschen</button></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td>
+          <form>
+            <p> I am
+              <input type="text" id="player0_textfield_name" value="D. T." />
+              <button id="setName">Ok</button>
+            </p>
+          </form>
+        </td>
+        <td><button id="rotateBoard">Spielbrett drehen</button></td>
+        <td><button id="newGame">Neues Spiel</button></td>
+      </tr>
+    </table>
+
+  <script type="text/javascript">
+
+        var html_element = $('button#player0_playCard[name="1"]');
+        var elements = html_element.each(function () {
+          $(this).attr('disabled', false);
+          $(this).attr('style', 'background-color: #0ff');
+        });
+
+        var html_element = $('p#player0_card[name="1"]');
+        var elements = html_element.each(function () {
+          $(this).attr('style', 'background-color: #0ff');
+          // $(this).html('Hallo <i>Velo</i>');
+          $(this).attr('innerText', 'Muh');
+        });
+  </script>
+
+
+</body>
+
+</html>

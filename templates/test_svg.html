@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Test SVG</title>
+
+  <style>
+    html {
+      margin: 0px;
+      min-height: 100%;
+      width: 100%;
+    }
+
+    body {
+      margin: 0px;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+  </style>
+
+<body>
+  <svg id="svg" width="100%", height="100vh"></svg>
+
+  <script src="../static/js/snap.svg.js"></script>
+
+  <script type="text/javascript">
+    var snap = Snap("#svg");
+  snap.attr({
+    viewBox: "-100 -100 200 200",
+    // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+    preserveAspectRatio: "none"
+  });
+
+  // groupTop = snap.g()
+  // var rectTop = groupTop.rect(-100, -100, 200, 50)
+  // rectTop.attr({
+  //   // fill: "#888",
+  //   fill: "#00F",
+  //   opacity: 0.5,
+  // })
+
+  // groupBottom = snap.g()
+  // groupBottom.attr({
+  //   viewBox: "-100 -100 200 200",
+  //   // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+  //   preserveAspectRatio: "none"
+  // });
+  // var rectBottom = snap.rect(-95, -45, 190, 140)
+  // rectBottom.attr({
+  //   // fill: "#888",
+  //   fill: "#0F0",
+  //   opacity: 0.5,
+  //   viewBox: "-100 -100 200 200",
+  //   // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+  //   preserveAspectRatio: "none"
+  // })
+
+
+  var rectBackground = snap.rect(-1000, -1000, 2000, 2000)
+  rectBackground.attr({
+    fill: "#AAA",
+    opacity: 0.5,
+  })
+
+  var rectBorder = snap.rect(-100, -100, 200, 200, 10, 10)
+  rectBorder.attr({
+    // fill: "#888",
+    fill: "#f00",
+    opacity: 0.5,
+  })
+
+  // var rectBottom = snap.rect(-100, 0, 200, 100, 10, 10)
+  // rectBottom.attr({
+  //   // fill: "#888",
+  //   fill: "#00f",
+  //   opacity: 0.5,
+  // })
+
+  var goupBoard = snap.svg()
+  goupBoard.attr({
+    width: 100,
+    height: 100,
+    viewBox: "-100 -100 200 200",
+    // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+    preserveAspectRatio: "none"
+  });
+
+  var board = goupBoard.image("../static/img/20030731_181107_dog_4.jpg", -90, -90, 180, 180);
+board.attr({
+  // x: 10,
+  // y: 10,
+  // width: 200,
+  // height: 200,
+  opacity: 0.5,
+  class: "draggable"
+})
+</script>
+
+</body>
+
+</html>

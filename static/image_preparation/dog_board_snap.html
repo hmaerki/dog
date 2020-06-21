@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- https://www.w3schools.com/graphics/svg_intro.asp -->
+<html>
+  <style>
+    .body {
+      background:lightgray;
+    }
+    /* .card {
+      filter: drop-shadow(0px 30px 30px rgba(0, 0, 0, 1.0));
+    }
+    .cardMaskClass {
+      filter: drop-shadow(0px 30px 30px rgba(0, 0, 0, 1.0));
+    } */
+  </style>
+</head>
+<body>
+  
+  <svg id="svg" width="100%" , height="100vh"></svg>
+
+  <script src="snap.svg.js"></script>
+  <script type="text/javascript">
+    var snapBoard = Snap("#svg");
+    snapBoard.attr({
+      viewBox: "-100 -100 200 200",
+      // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+      preserveAspectRatio: "none"
+    });
+
+    groupBoard = snapBoard.g()
+
+    var circleMask = groupBoard.circle(0, 0, 100).attr({ fill: 'white' });
+    var board = groupBoard.image("/static/board4/board.jpg", -100, -100, 200, 200);
+    board.attr({
+      class: "draggable",
+      mask: circleMask
+    })
+    // groupBoard.animate({ transform: 'r90,0,0' }, 5000, mina.bounce);
+
+    // http://svg.dabbles.info/snaptut-load
+    var move = function(dx,dy) {
+      this.attr({
+                  transform: this.data('origTransform') + (this.data('origTransform') ? "T" : "t") + [dx, dy]
+              });
+      var svgNode = this.node.childNodes[1]
+      // console.log('cx:' + svgNode.x.baseVal.value)
+      var t = this.transform()
+      // console.log('transform:' + t.local)
+      var x = t.localMatrix.e
+      var y = t.localMatrix.f
+      console.log('x:' + x + ' y:' + y)
+
+      if (y > 70) {
+        opacity = 0.0
+      } else {
+        d = Math.abs(x)+Math.abs(y)
+        opacity = 0.05*(d-25)
+      }
+      var cardMask = this.select('rect#mask')
+      cardMask.attr({ opacity: opacity })
+    }
+    var start = function() {
+        this.data('origTransform', this.transform().local );
+    }
+    var stop = function() {
+        console.log('finished dragging');
+    }
+
+    // http://svg.dabbles.info/snaptut-load-animate
+
+      var cardname = "/static/board4/cards/2C.svg";
+      var cardname = "/static/board4/cards/joker.svg";
+      // var cardname = "/static/boardori/cards/6/joker.svg";
+    var card = Snap.load(cardname, function(fragCard) {
+      groupCard = groupBoard.g()
+      groupCard.append(fragCard)
+      groupCard.drag(move, start, stop);
+    });
+
+
+
+  </script>
+</body>
+
+</html>

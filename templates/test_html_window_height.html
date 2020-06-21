@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Test SVG</title>
+
+  <style>
+    html {
+      margin: 0px;
+      min-height: 100%;
+      width: 100%;
+    }
+
+    body {
+      background-color: gray;
+      margin: 0px;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+  </style>
+
+<body>
+  <div style="height: 10vh; background-color: red;">Top</div>
+  <div style="height: 70vh; background-color: green;">
+    <svg id="svg" width="100%" height="70vh" onload="makeDraggable(evt)"></svg>
+  </div>
+  <div style="height: 18vh; background-color: blue;">Bottom</div>
+
+  <script src="../static/js/snap.svg.js"></script>
+
+  <script type="text/javascript">
+    var snap = Snap("#svg");
+    snap.attr({
+      viewBox: "-100 -100 200 200",
+      // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+      // preserveAspectRatio: "xMidYMid meet"
+    });
+
+    var DogApp = {
+      mouseX: 0,
+      mouseY: 0
+    };
+
+    groupBoard = snap.g()
+
+    var lineDiag = groupBoard.line(-90, -90, 90, 90)
+    lineDiag.attr({
+      stroke: "#000",
+      strokeWidth: 5,
+      cursor: "move"
+    })
+
+    var circleDrag = groupBoard.circle(10, 10, 20);
+    circleDrag.attr({
+      class: "draggable",
+      background: "#0f0",
+      cursor: "move"
+    });
+
+
+    var circleDragSnap = groupBoard.circle(50, 10, 20);
+    circleDrag.attr({
+      class: "draggable",
+      background: "#00f",
+      cursor: "move"
+    });
+
+
+    // https://github.com/petercollingridge/code-for-blog/blob/master/svg-interaction/draggable/draggable_6.svg?short_path=9993f0d
+    // http://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/
+      function makeDraggable(evt) {
+        var svg = evt.target;
+        svg.addEventListener('mousedown', startDrag);
+        svg.addEventListener('mousemove', drag);
+        svg.addEventListener('mouseup', endDrag);
+        svg.addEventListener('mouseleave', endDrag);
+        svg.addEventListener('touchstart', startDrag);
+        svg.addEventListener('touchmove', drag);
+        svg.addEventListener('touchend', endDrag);
+        svg.addEventListener('touchleave', endDrag);
+        svg.addEventListener('touchcancel', endDrag);
+        function getMousePosition(evt) {
+          var CTM = svg.getScreenCTM();
+          if (evt.touches) { evt = evt.touches[0]; }
+          return {
+            x: (evt.clientX - CTM.e) / CTM.a,
+            y: (evt.clientY - CTM.f) / CTM.d
+          };
+        }
+        var selectedElement, offset, transform;
+        function startDrag(evt) {
+          if (evt.target.classList.contains('draggable')) {
+            selectedElement = evt.target;
+            offset = getMousePosition(evt);
+            // Make sure the first transform on the element is a translate transform
+            var transforms = selectedElement.transform.baseVal;
+            if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
+              // Create an transform that translates by (0, 0)
+              var translate = svg.createSVGTransform();
+              translate.setTranslate(0, 0);
+              selectedElement.transform.baseVal.insertItemBefore(translate, 0);
+            }
+            // Get initial translation
+            transform = transforms.getItem(0);
+            offset.x -= transform.matrix.e;
+            offset.y -= transform.matrix.f;
+          }
+        }
+        function drag(evt) {
+          if (selectedElement) {
+            evt.preventDefault();
+            var coord = getMousePosition(evt);
+            transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
+          }
+        }
+        function endDrag(evt) {
+          selectedElement = false;
+        }
+      }
+
+      // 'r0,0,0' -> groupBoard-matrix: 1, 0, 0, 1, 0, 0
+      // 'r90,0,0' -> groupBoard-matrix: 0, 1, -1, 0, 0, 0
+      // 'r180,0,0' -> groupBoard-matrix: -1, 0, 0, -1, 0, 0
+      // 'r270,0,0' -> groupBoard-matrix: 0, -1, 1, 0, 0, 0
+      // groupBoard.animate({ transform: 'r90,0,0' }, 1000, mina.bounce );
+      groupBoard.transform('r90,0,0');
+
+    /*
+    */
+    var move = function(dx,dy,mouseX,mouseY) {
+        // this.attr({
+        //   transform: origTransform + (origTransform ? "T" : "t") + [dx, dy]
+        // });
+
+        // m = this.node.transform.animVal[0].matrix
+        // m = this.node.transform.baseVal[0].matrix
+        // console.log('this.node.transform.baseVal[0].matrix.: ' + m.a + ', ' + m.b + ', ' + m.c + ', ' + m.d + ', ' + m.e + ', ' + m.f)
+        m = groupBoard.node.transform.baseVal[0].matrix
+        console.log('groupBoard.node.transform.baseVal[0].matrix.: ' + m.a + ', ' + m.b + ', ' + m.c + ', ' + m.d + ', ' + m.e + ', ' + m.f)
+
+        dx2 = + m.a*dx - m.c*dy
+        dy2 = - m.b*dx + m.d*dy
+
+        m = snap.transform().globalMatrix
+        factor = m.a
+        dx2 /= factor
+        dy2 /= factor
+
+        this.attr({
+            cx: DogApp.start_cx + dx2,
+            cy: DogApp.start_cy + dy2
+        });
+        // this.attr({
+        //   // transform: this.data('origTransform') + (this.data('origTransform') ? "T" : "t") + [dx2, dy2]
+        //   transform: "t" + [dx2, dy2]
+        // });
+      }
+
+
+    var start = function(mouseX, mouseY) {
+      this.data('origTransform', this.transform().local );
+
+      DogApp.start_cx = this.node.cx.baseVal.value;
+      DogApp.start_cy = this.node.cy.baseVal.value;
+      console.log('this.transform().local: ' + this.transform().local)
+      m = this.transform().localMatrix
+      console.log('start.matrix.: ' + m.a + ', ' + m.b + ', ' + m.c + ', ' + m.d + ', ' + m.e + ', ' + m.f)
+    }
+    var stop = function() {
+      console.log('finished dragging');
+    }
+
+
+    circleDragSnap.drag(move, start, stop)
+
+  </script>
+
+</body>
+
+</html>

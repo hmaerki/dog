@@ -1,0 +1,8 @@
+Flask
+Flask-Login
+Flask-Session
+Flask_SocketIO
+python-engineio
+python-socketio
+eventlet
+Werkzeug==0.16.0

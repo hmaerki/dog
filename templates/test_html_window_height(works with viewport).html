@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Test SVG</title>
+
+  <style>
+    html {
+      margin: 0px;
+      min-height: 100%;
+      width: 100%;
+    }
+
+    body {
+      background-color: gray;
+      margin: 0px;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+  </style>
+
+<body>
+  <div style="height: 10vh; background-color: red;">Top</div>
+  <div style="height: 70vh; background-color: green;">
+    <svg id="svg" width="100%" height="70vh" onload="makeDraggable(evt)"></svg>
+  </div>
+  <div style="height: 18vh; background-color: blue;">Bottom</div>
+
+  <script src="../static/js/snap.svg.js"></script>
+
+  <script type="text/javascript">
+    var snap = Snap("#svg");
+    snap.attr({
+      viewBox: "-100 -100 200 200",
+      // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+      // preserveAspectRatio: "xMidYMid meet"
+    });
+
+    var lineDiag = snap.line(-90, -90, 90, 90)
+    lineDiag.attr({
+      stroke: "#000",
+      strokeWidth: 5,
+      cursor: "move"
+    })
+
+    var circleDrag = snap.circle(10, 10, 20);
+    circleDrag.attr({
+      class: "draggable",
+      background: "#0f0",
+      cursor: "move"
+    });
+
+
+    // https://github.com/petercollingridge/code-for-blog/blob/master/svg-interaction/draggable/draggable_6.svg?short_path=9993f0d
+    // http://www.petercollingridge.co.uk/tutorials/svg/interactive/dragging/
+      function makeDraggable(evt) {
+        var svg = evt.target;
+        svg.addEventListener('mousedown', startDrag);
+        svg.addEventListener('mousemove', drag);
+        svg.addEventListener('mouseup', endDrag);
+        svg.addEventListener('mouseleave', endDrag);
+        svg.addEventListener('touchstart', startDrag);
+        svg.addEventListener('touchmove', drag);
+        svg.addEventListener('touchend', endDrag);
+        svg.addEventListener('touchleave', endDrag);
+        svg.addEventListener('touchcancel', endDrag);
+        function getMousePosition(evt) {
+          var CTM = svg.getScreenCTM();
+          if (evt.touches) { evt = evt.touches[0]; }
+          return {
+            x: (evt.clientX - CTM.e) / CTM.a,
+            y: (evt.clientY - CTM.f) / CTM.d
+          };
+        }
+        var selectedElement, offset, transform;
+        function startDrag(evt) {
+          if (evt.target.classList.contains('draggable')) {
+            selectedElement = evt.target;
+            offset = getMousePosition(evt);
+            // Make sure the first transform on the element is a translate transform
+            var transforms = selectedElement.transform.baseVal;
+            if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
+              // Create an transform that translates by (0, 0)
+              var translate = svg.createSVGTransform();
+              translate.setTranslate(0, 0);
+              selectedElement.transform.baseVal.insertItemBefore(translate, 0);
+            }
+            // Get initial translation
+            transform = transforms.getItem(0);
+            offset.x -= transform.matrix.e;
+            offset.y -= transform.matrix.f;
+          }
+        }
+        function drag(evt) {
+          if (selectedElement) {
+            evt.preventDefault();
+            var coord = getMousePosition(evt);
+            transform.setTranslate(coord.x - offset.x, coord.y - offset.y);
+          }
+        }
+        function endDrag(evt) {
+          selectedElement = false;
+        }
+      }
+
+    /*
+    var move = function(dx,dy,mousex,mousey) {
+        this.attr({
+                    transform: origTransform + (origTransform ? "T" : "t") + [dx, dy]
+                });
+    }
+
+
+    var start = function(mouseX, mouseY) {
+      origTransform = this.transform().local;
+    }
+    var stop = function() {
+      console.log('finished dragging');
+    }
+
+
+    circleDrag.drag(move, start, stop)
+    */
+  </script>
+
+</body>
+
+</html>

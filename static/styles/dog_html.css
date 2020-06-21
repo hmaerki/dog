@@ -1,0 +1,16 @@
+html {
+  margin: 0px;
+  min-height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0px;
+  min-height: 100%;
+  width: 100%;
+  height: 100vh;
+  background-color:lightgray;
+  /* background-image: url("/static/img/background_table_coarse_banane.jpg");
+  background-repeat: no-repeat;
+  background-size: cover; */
+}

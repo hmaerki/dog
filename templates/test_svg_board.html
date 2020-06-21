@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Test SVG</title>
+
+  <style>
+    html {
+      margin: 0px;
+      min-height: 100%;
+      width: 100%;
+    }
+
+    body {
+      margin: 0px;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+  </style>
+
+<body>
+  <svg id="svg" width="100%", height="100vh"></svg>
+
+  <script src="../static/js/snap.svg.js"></script>
+
+  <script type="text/javascript">
+    var snap = Snap("#svg");
+  snap.attr({
+    viewBox: "-100 -100 200 200",
+    // https://wiki.selfhtml.org/wiki/SVG/Tutorials/Einstieg/SVG_in_responsiven_Webseiten#preserveAspectRatio
+    preserveAspectRatio: "none"
+  });
+
+  // var snap = Snap();
+  // Lets create big circle in the middle:
+  var circleColorChange = snap.circle(10, 10, 20);
+  circleColorChange.attr({
+    class: "colorchange"
+  });
+
+  var rectBackground = snap.rect(-1000, -1000, 2000, 2000)
+  rectBackground.attr({
+    fill: "#AAA",
+    opacity: 0.5,
+  })
+
+  var rectBorder = snap.rect(-100, -100, 200, 200, 10, 10)
+  rectBorder.attr({
+    // fill: "#888",
+    fill: "#f00",
+    opacity: 0.5,
+  })
+
+  var board = snap.image("../static/img/20030731_181107_dog_4.jpg", -90, -90, 180, 180);
+board.attr({
+  // x: 10,
+  // y: 10,
+  // width: 200,
+  // height: 200,
+  class: "draggable"
+})
+</script>
+
+</body>
+
+</html>

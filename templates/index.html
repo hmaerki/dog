@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Online Dog</title>
+
+  <link rel="stylesheet" href="/static/styles/dog_svg.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="/static/styles/dog_html.css" type="text/css" media="screen" />
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+    integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
+  <!-- http://code.jquery.com/jquery/ -->
+  <script
+  src="http://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <script type="text/javascript">
+    var DogApp = {
+      ROOM: "{{ game.gameState.room }}",
+      BOARD_ID: {{ game.dbc.BOARD_ID }},
+      PLAYER_COUNT: {{ game.dgc.PLAYER_COUNT }},
+      CARD_HEIGHT: {{ game.dbc.CARD_SIZE.imag }},
+      CARD_WIDTH: {{ game.dbc.CARD_SIZE.real }},
+      playerIndex: 0,
+    };
+  </script>
+  <script src="/static/js/dog_dispatcher.js"></script>
+
+  <!-- https://www.w3chools.com/graphics/svg_examples.asp -->
+  <!-- https://svgjs.com/docs/3.0/ -->
+  <svg id="svg" width="100%" height="65vh"></svg>
+
+  <script src="/static/js/snap.svg.js"></script>
+
+  <script src="/static/js/dog_svg.js"></script>
+
+</body>
+
+</html>
