@@ -12,6 +12,7 @@ import dog_constants
 import dog_game
 
 DIRECTORY_OF_THIS_FILE = pathlib.Path(__file__).parent.absolute()
+DEBUG = False
 
 app = flask.Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
