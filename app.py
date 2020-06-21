@@ -12,6 +12,7 @@ import dog_constants
 import dog_game
 
 DIRECTORY_OF_THIS_FILE = pathlib.Path(__file__).parent.absolute()
+DEBUG = False
 
 app = flask.Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
@@ -154,4 +155,4 @@ def debugjson():
 if __name__ == '__main__':
     # eventlet.spawn(timer_run)
 
-    socketio.run(app, host="0.0.0.0")
+    socketio.run(app, host="0.0.0.0", port=80)
