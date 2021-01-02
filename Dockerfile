@@ -1,4 +1,4 @@
-FROM python:3.8-stretch
+FROM python:3.7-stretch
 
 LABEL version="0.2"
 
