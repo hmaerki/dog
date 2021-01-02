@@ -1,6 +1,6 @@
-FROM python:3.7-stretch
+FROM python:3.8-stretch
 
-LABEL version="0.1"
+LABEL version="0.2"
 
 WORKDIR /app
 ENV FLASK_APP __init__.py
