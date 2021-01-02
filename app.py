@@ -155,4 +155,4 @@ def debugjson():
 if __name__ == '__main__':
     # eventlet.spawn(timer_run)
 
-    socketio.run(app, host="0.0.0.0")
+    socketio.run(app, host="0.0.0.0", port=80)
