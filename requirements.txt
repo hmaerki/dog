@@ -4,5 +4,5 @@ Flask-Session==0.3.2
 Flask-SocketIO==4.3.0
 python-engineio==3.13.0
 python-socketio==4.6.0
-eventlet==0.25.2
+eventlet==0.31.0
 Werkzeug==0.16.0
