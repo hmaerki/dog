@@ -1,0 +1,12 @@
+version: "3.6"
+
+services:
+  dog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: http_dog
+    restart: always
+    ports:
+      - 92.205.108.193:80:80
+
