@@ -152,7 +152,10 @@ def debugjson():
 #         socketio.send(data_json, json=True, broadcast=True)
 #         eventlet.sleep(1.0)
 
-if __name__ == '__main__':
+def main():
     # eventlet.spawn(timer_run)
 
     socketio.run(app, host="0.0.0.0", port=80)
+
+if __name__ == '__main__':
+    main()
