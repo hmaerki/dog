@@ -14,7 +14,7 @@ LIST_4_COLOURS = (
     dict(id="ace", german=dict(name="Ass", description="Eine Kugel zum Start bewegen oder 11 Felder vorwärts oder 1 Feld vorwärts")),
     dict(id="jack", german=dict(name="Junge", description="Eigene Kugel mit einer fremden Kugel tauschen")),
     dict(id="queen", german=dict(name="Dame", description="12 Felder vorwärts")),
-    dict(id="king", german=dict(name="König", description="Eige Kugel zum Start bewegen oder 13 Felder vorwärts")),
+    dict(id="king", german=dict(name="König", description="Eigene Kugel zum Start bewegen oder 13 Felder vorwärts")),
 )
 
 JOKER = dict(id="joker", german=dict(name="Joker", description="Karte nach Wunsch. Als letzte Karte zum Sieg darf der Joker nicht gelegt werden."))

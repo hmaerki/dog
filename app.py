@@ -1,14 +1,13 @@
-
+import os
 import logging
 import pathlib
 
-import eventlet
 import jinja2
 import flask
-import flask_session
 import flask_socketio
 
-import dog_constants
+import flask_session
+
 import dog_game
 
 DIRECTORY_OF_THIS_FILE = pathlib.Path(__file__).parent.absolute()
@@ -109,8 +108,9 @@ def handleMoveCard(json: dict):
 
 @app.route('/')
 def index():
-    location = f'{flask.request.url_root}2/sandbox'
-    return flask.redirect(location=location)
+    return flask.redirect(flask.url_for("index_room", players=2, group="sandbox"))
+    # location = f'{flask.request.url_root}2/sandbox'
+    # return flask.redirect(location=location)
 
 # dogspiel.ch/<players>/<room>
 @app.route('/<int:players>/<string:group>')
@@ -155,7 +155,10 @@ def debugjson():
 def main():
     # eventlet.spawn(timer_run)
 
-    socketio.run(app, host="0.0.0.0", port=80)
+    port = os.environ.get("PORT", "5000")
+    port = int(port)
+    print(f"Starting on port={port }")
+    socketio.run(app, host="0.0.0.0", port=port)
 
 if __name__ == '__main__':
     main()
