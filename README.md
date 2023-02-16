@@ -1,4 +1,8 @@
 ## TODO
+ * devcontainer
+ * Workspace, rauc, isort, ...
+ * fastapi, docker,
+ * communication via js
 
  * Form auf dogspiel.ch
  * online.dogspiel.ch -> Tempstablizier
@@ -45,3 +49,40 @@ It covers a simple SocketIO app in Flask.
 # how to build with docker
 
 `docker_rebuild.sh`
+
+## Socketio vs Websockets
+
+https://stackoverflow.com/questions/10112178/differences-between-socket-io-and-websockets
+
+* socket.io has rooms, websockets not...
+* https://github.com/rsp/node-websocket-vs-socket.io/blob/master/si.html
+
+### Socketio
+
+* javascript: https://www.programonaut.com/how-to-create-websocket-rooms-without-socket-io/
+* https://github.com/pyropy/fastapi-socketio
+
+### Websockets
+
+* python: https://sdamoosavi.medium.com/chatroom-development-with-fastapi-websocket-1c96880412d7
+* python: https://gealber.com/simple-chat-app-websockets-fastapi
+* python: https://github.com/arezamoosavi/whisper-chat
+
+* https://github.com/tiangolo/fastapi/tree/master/docs_src/websockets
+
+* https://davidwalsh.name/websocket
+
+
+https://github.com/hmaerki/experiment_mongodb-with-fastapi
+
+### Snap
+
+http://snapsvg.io/
+
+http://localhost:8000/static/snapsvg.io/demos/tutorial/index.html
+http://localhost:8000/static/snapsvg.io/demos/snap-mascot/index.html
+http://localhost:8000/static/snapsvg.io/demos/animated-game/index.html
+http://localhost:8000/static/snapsvg.io/demos/animated-map/index.html
+http://localhost:8000/static/snapsvg.io/demos/illustrated-infographic-coffee/index.html
+http://localhost:8000/static/snapsvg.io/demos/clock/index.html
+http://localhost:8000/static/snapsvg.io/demos/pattern/index.html

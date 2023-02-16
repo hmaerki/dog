@@ -1,16 +1,17 @@
-FROM python:3.9-alpine
+# syntax=docker/dockerfile:1.4
 
-LABEL version="0.2"
+FROM python:3.14-slim AS builder
 
 WORKDIR /app
-ENV FLASK_APP __init__.py
-ENV FLASK_RUN_HOST 0.0.0.0
-COPY requirements.txt requirements.txt
-RUN pip install --upgrade pip \
-  && pip install -r requirements.txt
-COPY . .
-ENV HOST 0.0.0.0
-EXPOSE 80
 
-CMD ["python", "app.py"]
+COPY pyproject.toml .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir .
 
+COPY ./app ./app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+
+FROM builder AS dev-envs
+
+RUN pip install --no-cache-dir "."
