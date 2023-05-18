@@ -1,4 +1,8 @@
 ## TODO
+ * devcontainer
+ * Workspace, rauc, isort, ...
+ * fastapi, docker,
+ * communication via js
 
  * Form auf dogspiel.ch
  * online.dogspiel.ch -> Tempstablizier

@@ -1,0 +1,117 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "Existing Dockerfile",
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+		"dockerfile": "../Dockerfile"
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {
+			"version": "latest"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"hediet.vscode-drawio",
+				"mhutchie.git-graph",
+				"ms-python.vscode-pylance",
+				"ms-python.python",
+				"ms-python.black-formatter",
+				"ms-python.isort",
+				"github.copilot",
+				"bierner.markdown-mermaid",
+				"joffreykern.markdown-toc",
+				"charliermarsh.ruff"
+			],
+			"settings": {
+				"python.formatting.provider": "black",
+				"python.linting.enabled": true,
+				"python.linting.pylintEnabled": false,
+				"python.linting.pylintArgs": [
+					"--rcfile=${workspaceFolder}/.pylintrc"
+				],
+				"python.linting.cwd": "${workspaceFolder}",
+				"python.linting.mypyEnabled": true,
+				// "python.testing.pytestArgs": [],
+				"python.testing.cwd": "${workspaceFolder}",
+				"python.testing.unittestEnabled": false,
+				"python.testing.pytestEnabled": true,
+				"python.linting.mypyArgs": [
+					"--config-file=${workspaceFolder}/.mypy.ini"
+				],
+				"ruff.organizeImports": true,
+				"ruff.fixAll": true,
+				"ruff.importStrategy": "fromEnvironment",
+				"ruff.args": [
+					"--config=${workspaceFolder}/.ruff.toml"
+				],
+				"[python]": {
+					"editor.defaultFormatter": "ms-python.black-formatter",
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.fixAll": true,
+						"source.organizeImports": true
+					}
+				},
+				// "isort.args": [
+				// 	"--profile",
+				// 	"black"
+				// ],
+				// "base", "forest", "dark", "default", "neutral"
+				"markdown-mermaid.lightModeTheme": "base",
+				"markdown-mermaid.darkModeTheme": "dark",
+				"files.exclude": {
+					"app/ui/*.py": true,
+					"app/uic/": true,
+					"**/__pycache__/": true,
+					"**/.mypy_cache/": true,
+					"**/.pytest_cache/": true
+				},
+				"git.openRepositoryInParentFolders": "always",
+				"launch": {
+					// Use IntelliSense to learn about possible attributes.
+					// Hover to view descriptions of existing attributes.
+					// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+					"version": "0.2.0",
+					"configurations": [
+						{
+							"name": "Python: App",
+							"type": "python",
+							"request": "launch",
+							"program": "${workspaceFolder}/app.py",
+							"console": "integratedTerminal"
+						},
+						{
+							"name": "Python: Game Doctest",
+							"type": "python",
+							"request": "launch",
+							"program": "${workspaceFolder}/dog_game.py",
+							"console": "integratedTerminal"
+						},
+						{
+							"name": "Python: Current File",
+							"type": "python",
+							"request": "launch",
+							"program": "${file}",
+							"console": "integratedTerminal"
+						}
+					]
+				}
+			}
+		}
+	}
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Uncomment the next line to run commands after the container is created.
+	// "postCreateCommand": "cat /etc/os-release",
+	// Configure tool-specific properties.
+	// "customizations": {},
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+}
