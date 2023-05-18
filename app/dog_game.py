@@ -1,7 +1,6 @@
-
+import logging
 import math
 import typing
-import logging
 
 import dog_cards
 import dog_constants
@@ -11,10 +10,19 @@ logging.basicConfig(level=logging.DEBUG)
 
 dog_patch_cards.CardsPatcher().convert_cards()
 
-INITIAL_NAME = ('Asterix', 'Obelix', 'Trubadix', 'Idefix')
+INITIAL_NAME = ("Asterix", "Obelix", "Trubadix", "Idefix")
+
 
 class PlayersCard:
-    def __init__(self, gameState: 'GameState', id: int, angle: int, x_initial: int, y_initial: int, card: dog_cards.Card):
+    def __init__(
+        self,
+        gameState: "GameState",
+        id: int,
+        angle: int,
+        x_initial: int,
+        y_initial: int,
+        card: dog_cards.Card,
+    ):
         self.__gameState = gameState
         self.id = id
         self.__order = self.__gameState.nextOrder()
@@ -25,7 +33,7 @@ class PlayersCard:
         self.__y_initial = y_initial
         self.__card = card
 
-    def move(self, x:int, y:int):
+    def move(self, x: int, y: int):
         self.__x = x
         self.__y = y
         self.__order = self.__gameState.nextOrder()
@@ -39,37 +47,49 @@ class PlayersCard:
 
     @property
     def jsonAll(self):
-        return (self.id, int(self.__angle), int(self.__x), int(self.__y), self.__card.filebase, self.__card.descriptionI18N)
+        return (
+            self.id,
+            int(self.__angle),
+            int(self.__x),
+            int(self.__y),
+            self.__card.filebase,
+            self.__card.descriptionI18N,
+        )
 
     def __lt__(self, other):
         return self.__order < other.__order
-    
+
     def __eq__(self, other):
         return self.__order == other.__order
 
+
 class Marble:
-    def __init__(self, id:int):
+    def __init__(self, id: int):
         self.id = id
         self.reset()
 
-    def move(self, x:int, y:int):
+    def move(self, x: int, y: int):
         self.__x = x
         self.__y = y
 
     def reset(self):
-        self.__x = 2*self.id
-        self.__y = 1*self.id
+        self.__x = 2 * self.id
+        self.__y = 1 * self.id
 
     @property
     def json(self):
         return (self.id, int(self.__x), int(self.__y))
 
+
 class GameState:
-    def __init__(self, game: 'Game', room: str):
+    def __init__(self, game: "Game", room: str):
         self.game = game
         self.room = room
         self.__order = 0
-        self.__list_marbles = [Marble(id) for id in range(self.dgc.PLAYER_COUNT*dog_constants.MARBLE_COUNT)]
+        self.__list_marbles = [
+            Marble(id)
+            for id in range(self.dgc.PLAYER_COUNT * dog_constants.MARBLE_COUNT)
+        ]
         self.reset()
         self.__game_dirty = False
         self.__board_dirty = False
@@ -111,12 +131,19 @@ class GameState:
                 for cardIndex in range(cards):
                     cardCenter = self.dbc.LIST_CARD_CENTER[cardIndex]
                     PLAYER_OFFSET = 10  # The first player start with 10, then 20, ...
-                    id = PLAYER_OFFSET*(1+playerIndex) + cardIndex
-                    cardCenterRotated = math.e**(complex(0, playerAngle)) * cardCenter
+                    id = PLAYER_OFFSET * (1 + playerIndex) + cardIndex
+                    cardCenterRotated = math.e ** (complex(0, playerAngle)) * cardCenter
                     x_initial = cardCenterRotated.real
                     y_initial = cardCenterRotated.imag
                     card = cardstack.pop_card()
-                    yield PlayersCard(gameState=self, id=id, angle=angleDeg, x_initial=x_initial, y_initial=y_initial, card=card)
+                    yield PlayersCard(
+                        gameState=self,
+                        id=id,
+                        angle=angleDeg,
+                        x_initial=x_initial,
+                        y_initial=y_initial,
+                        card=card,
+                    )
 
         self.__list_cards = list(generator())
 
@@ -132,19 +159,19 @@ class GameState:
         self.__game_dirty = True
 
     def event(self, json: str) -> typing.Optional[str]:
-        if json['event'] == 'browserConnected':
+        if json["event"] == "browserConnected":
             self.gameDirty()
             return
 
-        if json['event'] == 'newName':
-            idx = json['idx']
-            name = json['name']
+        if json["event"] == "newName":
+            idx = json["idx"]
+            name = json["name"]
             self.list_player_names[idx] = name
             self.gameDirty()
 
-        if json['event'] == 'buttonPressed':
-            label = json['label']
-            method = f'button_{label.upper()}'
+        if json["event"] == "buttonPressed":
+            label = json["label"]
+            method = f"button_{label.upper()}"
             f = getattr(self, method)
             assert f is not None
             f()
@@ -161,28 +188,28 @@ class GameState:
 
     def appendStateGame(self, json: dict) -> None:
         self.__game_dirty = False
-        json['playerNames'] = self.list_player_names
+        json["playerNames"] = self.list_player_names
 
         self.__list_cards.sort()
-        json['cards'] = [card.jsonAll for card in self.__list_cards]
+        json["cards"] = [card.jsonAll for card in self.__list_cards]
 
-        json['marbles'] = [marble.json for marble in self.__list_marbles]
+        json["marbles"] = [marble.json for marble in self.__list_marbles]
 
-    def moveCard(self, id:int, x:int, y:int) -> dict:
+    def moveCard(self, id: int, x: int, y: int) -> dict:
         def findCard():
             for card in self.__list_cards:
                 if card.id == id:
                     return card
-            raise Exception('Card not found')
+            raise Exception("Card not found")
 
         card = findCard()
         card.move(x=x, y=y)
-        return { 'card': card.jsonMove }
+        return {"card": card.jsonMove}
 
-    def moveMarble(self, id:int, x:int, y:int) -> dict:
+    def moveMarble(self, id: int, x: int, y: int) -> dict:
         marble = self.__list_marbles[id]
         marble.move(x=x, y=y)
-        return { 'marble': marble.json }
+        return {"marble": marble.json}
 
     def appendStateBoard(self, json: dict) -> None:
         self.__board_dirty = False
@@ -212,6 +239,7 @@ class GameState:
         self.__initializeCards(6)
         self.gameDirty()
 
+
 class Game:
     def __init__(self, players: int, room: str):
         def getDgc(playerCount):
@@ -219,6 +247,7 @@ class Game:
                 if dgc.PLAYER_COUNT == playerCount:
                     return dgc
             return dog_constants.DOG_GAME_CONSTANTS_2
+
         self.dgc = getDgc(players)
         self.gameState = GameState(self, room)
         self.gameState.boardDirty()
@@ -229,10 +258,10 @@ class Game:
     def appendState(self, json: dict) -> None:
         self.gameState.appendState(json)
 
-    def moveCard(self, id:int, x:int, y:int) -> dict:
+    def moveCard(self, id: int, x: int, y: int) -> dict:
         return self.gameState.moveCard(id=id, x=x, y=y)
 
-    def moveMarble(self, id:int, x:int, y:int) -> dict:
+    def moveMarble(self, id: int, x: int, y: int) -> dict:
         return self.gameState.moveMarble(id=id, x=x, y=y)
 
     @property
@@ -242,4 +271,3 @@ class Game:
     @property
     def room(self) -> str:
         return self.gameState.room
-
