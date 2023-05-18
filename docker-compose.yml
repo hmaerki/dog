@@ -1,12 +1,13 @@
-version: "3.6"
-
 services:
   dog:
     build:
       context: .
-      dockerfile: Dockerfile
+      target: builder
     container_name: http_dog
-    restart: always
+    environment:
+      PORT: 80
     ports:
-      - 92.205.108.193:80:80
+      - 0.0.0.0:80:80
+      # - 92.205.108.193:80:80
+    restart: "always"
 

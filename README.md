@@ -49,3 +49,15 @@ It covers a simple SocketIO app in Flask.
 # how to build with docker
 
 `docker_rebuild.sh`
+
+### Snap
+
+http://snapsvg.io/
+
+http://localhost:8000/static/snapsvg.io/demos/tutorial/index.html
+http://localhost:8000/static/snapsvg.io/demos/snap-mascot/index.html
+http://localhost:8000/static/snapsvg.io/demos/animated-game/index.html
+http://localhost:8000/static/snapsvg.io/demos/animated-map/index.html
+http://localhost:8000/static/snapsvg.io/demos/illustrated-infographic-coffee/index.html
+http://localhost:8000/static/snapsvg.io/demos/clock/index.html
+http://localhost:8000/static/snapsvg.io/demos/pattern/index.html

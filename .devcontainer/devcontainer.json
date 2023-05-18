@@ -8,11 +8,11 @@
 		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 		"dockerfile": "../Dockerfile"
 	},
-	"features": {
-		"ghcr.io/devcontainers/features/git:1": {
-			"version": "latest"
-		}
-	},
+	// "features": {
+	// 	"ghcr.io/devcontainers/features/git:1": {
+	// 		"version": "latest"
+	// 	}
+	// },
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -93,13 +93,6 @@
 						// 	"console": "integratedTerminal"
 						// },
 						{
-							"name": "Python: Current File",
-							"type": "python",
-							"request": "launch",
-							"program": "${file}",
-							"console": "integratedTerminal"
-						},
-						{
 							// uvicorn.run(app, host="0.0.0.0", port=8000)
 							// CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
 							"name": "Python: Dog",
@@ -109,19 +102,29 @@
 							"args": [
 								"app.main:app",
 								"--host=0.0.0.0",
-								"--port=80"
+								"--port=8000"
 							],
+							"cwd": "${workspaceFolder}",
+							"console": "integratedTerminal"
+						},
+						{
+							"name": "Python: Current File",
+							"type": "python",
+							"request": "launch",
+							"program": "${file}",
 							"console": "integratedTerminal"
 						}
 					]
 				}
 			}
 		}
-	}
+	},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [
+		8000
+	]
 	// Uncomment the next line to run commands after the container is created.
 	// "postCreateCommand": "cat /etc/os-release",
 	// Configure tool-specific properties.
