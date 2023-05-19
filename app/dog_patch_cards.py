@@ -43,7 +43,7 @@ class CardsPatcher(xml.sax.saxutils.XMLFilterBase):
             # print(f'*** {filenameOri} -> {filenameNew}')
 
             reader = CardsPatcher()
-            with open(filenameNew, "w", encoding="utf-8") as f:
+            with filenameNew.open("w", encoding="utf-8") as f:
                 handler = xml.sax.saxutils.XMLGenerator(f, encoding="utf-8")
                 reader.setContentHandler(handler)
                 reader.parse(str(filenameOri))

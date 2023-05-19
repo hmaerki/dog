@@ -2,9 +2,7 @@ import logging
 import math
 import typing
 
-import dog_cards
-import dog_constants
-import dog_patch_cards
+from app import dog_cards, dog_constants, dog_patch_cards
 
 logging.basicConfig(level=logging.DEBUG)
 

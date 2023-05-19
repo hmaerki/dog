@@ -2,7 +2,9 @@
 # Based on https://github.com/docker/awesome-compose/blob/master/fastapi/Dockerfile
 # syntax = docker/dockerfile:1.4
 
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11-slim AS builder
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11-sim AS builder
+# FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11-slim AS builder
+# Git is missing in 'python3.11-slim'!
 
 WORKDIR /app
 

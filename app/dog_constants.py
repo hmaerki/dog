@@ -1,8 +1,7 @@
 import pathlib
 import random as r
 
-import dog_constants_4
-import dog_constants_6
+from app import dog_constants_4, dog_constants_6
 
 DIRECTORY_OF_THIS_FILE = pathlib.Path(__file__).parent.absolute()
 

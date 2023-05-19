@@ -1,5 +1,4 @@
-static/img/cards/**
-flask_session
+app/static/img/cards/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
