@@ -127,21 +127,6 @@
 							"console": "integratedTerminal"
 						},
 						{
-							"name": "Python: Dog (main)",
-							"type": "python",
-							"request": "launch",
-							"module": "app.main",
-							"args": [],
-							"pythonArgs": [
-								"-Xfrozen_modules=off"
-							],
-							"env": {
-								"PYDEVD_DISABLE_FILE_VALIDATION": "1"
-							},
-							"cwd": "${workspaceFolder}",
-							"console": "integratedTerminal"
-						},
-						{
 							"name": "Python: Current File",
 							"type": "python",
 							"request": "launch",

@@ -1,18 +1,17 @@
 
 $(document).ready(function () {
-  DogApp.socket = io.connect('http://' + document.domain + ':' + location.port);
+  DogApp.socket = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws/42');
+  // DogApp.socket.on('connect', function () {
+  //   var msg = { room: DogApp.ROOM, event: 'browserConnected' };
+  //   DogApp.socket.emit('event', msg);
+  // });
 
-  DogApp.socket.on('connect', function () {
-    var msg = { room: DogApp.ROOM, event: 'browserConnected' };
-    DogApp.socket.emit('event', msg);
-  });
-
-  DogApp.socket.on('json', function (json) {
-
+  DogApp.socket.onmessage = function (e) {
+    var json = JSON.parse(e.data);
     var playerNames = json['playerNames']
     if (playerNames) {
       playerNames.forEach(function (playerName, index) {
-        var svg_element = $('text#'+index+'name')
+        var svg_element = $('text#' + index + 'name')
         svg_element.text(playerName)
       });
     }
@@ -24,13 +23,13 @@ $(document).ready(function () {
       var x = card[2]
       var y = card[3]
 
-      groupCard = groupBoard.select('g#card'+idnum)
+      groupCard = groupBoard.select('g#card' + idnum)
 
       groupCard.attr({
-        transform: 't'+x+','+y+'r'+angle+' 0 0',
+        transform: 't' + x + ',' + y + 'r' + angle + ' 0 0',
       });
       opacityCard(groupCard);
-  
+
       // Show this card on the top
       groupBoard.append(groupCard)
     }
@@ -48,24 +47,24 @@ $(document).ready(function () {
         var filebase = card_attrs[4]
         var descriptionI18N = card_attrs[5]
 
-        id = 'card'+idnum
+        id = 'card' + idnum
         var groupCard = groupBoard.g()
         groupCard.node.id = id
         groupCard.attr({
-          class:'card',
+          class: 'card',
         })
         groupCard.drag(card_drag_move, card_drag_start, card_drag_stop);
 
         groupCard.image(
           "/static/img/cards/" + filebase + ".svg",
-          -DogApp.CARD_WIDTH/2,
-          -DogApp.CARD_HEIGHT/2,
+          -DogApp.CARD_WIDTH / 2,
+          -DogApp.CARD_HEIGHT / 2,
           DogApp.CARD_WIDTH,
           DogApp.CARD_HEIGHT
         );
         var svgMask = groupCard.rect(
-          -DogApp.CARD_WIDTH/2,
-          -DogApp.CARD_HEIGHT/2,
+          -DogApp.CARD_WIDTH / 2,
+          -DogApp.CARD_HEIGHT / 2,
           DogApp.CARD_WIDTH,
           DogApp.CARD_HEIGHT,
           2 // radius
@@ -85,23 +84,23 @@ $(document).ready(function () {
           groupCard.append(title);
         }
 
-        groupCard.animate({'transform': 't'+x+','+y+'r'+angle+',0,0'}, 3000, mina.backout, updateOpacity);
+        groupCard.animate({ 'transform': 't' + x + ',' + y + 'r' + angle + ',0,0' }, 3000, mina.backout, updateOpacity);
       });
     }
 
-    var moveMarble = function(marble_attrs) {
+    var moveMarble = function (marble_attrs) {
       var idnum = marble_attrs[0]
       var x = marble_attrs[1]
       var y = marble_attrs[2]
 
-      marble = groupBoard.select('image#marble'+idnum)
+      marble = groupBoard.select('image#marble' + idnum)
 
       marble.attr({
         x: x,
         y: y,
       });
     }
-  
+
     var marble = json['marble']
     if (marble) {
       moveMarble(marble)
@@ -110,9 +109,8 @@ $(document).ready(function () {
     var marbles = json['marbles']
     if (marbles) {
       marbles.forEach(function (marble_attrs, i) {
-          moveMarble(marble_attrs)
+        moveMarble(marble_attrs)
       });
     }
+  };
 });
-});
-

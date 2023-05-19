@@ -50,26 +50,30 @@ It covers a simple SocketIO app in Flask.
 
 `docker_rebuild.sh`
 
-### Socketio
+## Socketio vs Websockets
 
 https://stackoverflow.com/questions/10112178/differences-between-socket-io-and-websockets
 
 * socket.io has rooms, websockets not...
-  javascript: https://www.programonaut.com/how-to-create-websocket-rooms-without-socket-io/
+* https://github.com/rsp/node-websocket-vs-socket.io/blob/master/si.html
 
-  python: https://sdamoosavi.medium.com/chatroom-development-with-fastapi-websocket-1c96880412d7 https://github.com/arezamoosavi/whisper-chat https://gealber.com/simple-chat-app-websockets-fastapi
+### Socketio
 
-  https://github.com/tiangolo/fastapi/tree/master/docs_src/websockets
+* javascript: https://www.programonaut.com/how-to-create-websocket-rooms-without-socket-io/
+* https://github.com/pyropy/fastapi-socketio
 
-https://github.com/rsp/node-websocket-vs-socket.io/blob/master/si.html
+### Websockets
 
-https://davidwalsh.name/websocket
-https://github.com/pyropy/fastapi-socketio
+* python: https://sdamoosavi.medium.com/chatroom-development-with-fastapi-websocket-1c96880412d7
+* python: https://gealber.com/simple-chat-app-websockets-fastapi
+* python: https://github.com/arezamoosavi/whisper-chat
+
+* https://github.com/tiangolo/fastapi/tree/master/docs_src/websockets
+
+* https://davidwalsh.name/websocket
 
 
 https://github.com/hmaerki/experiment_mongodb-with-fastapi
-
-
 
 ### Snap
 

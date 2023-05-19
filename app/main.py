@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -38,6 +38,28 @@ class Rooms:
 rooms = Rooms()
 
 
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+
+manager = ConnectionManager()
+
+
 # @app.route("/")
 # def index():
 #     location = f"{flask.request.url_root}2/sandbox"
@@ -62,22 +84,36 @@ async def index_room(request: Request, players: int, group: str):
     return templates.TemplateResponse("index.html", context=context)
 
 
-# @app.route("/favicon.ico")
-# def favicon():
-# return flask.send_file(DIRECTORY_OF_THIS_FILE / "static" / "favicon.ico")
-if __name__ == "__main__":
-    # uvicorn.run(
-    #     app,
-    #     host="0.0.0.0",
-    #     port=8000,
-    #     log_level="debug",
-    #     debug=True,
-    # )
-    uvicorn.run(
-        "app.main:app",
-        host="0.0.0.0",
-        port=8000,
-        log_level="debug",
-        reload=True,
-        workers=1,
-    )
+@app.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: int):
+    await manager.connect(websocket)
+    try:
+        while True:
+            json = await websocket.receive_json()
+            if json["event"] == "browserConnected":
+                room = json["room"]
+                flask_socketio.join_room(room)
+
+            game = rooms.get(json["event"])
+            game.event(json)
+            json_command = {}
+            game.appendState(json_command)
+            # socketio.send(json_command, json=True, room=game.room)
+            await websocket.send_json(json_command)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast(f"Client #{client_id} left the chat")
+
+
+@app.websocket("/wsx/{client_id}")
+async def websocket_endpointx(websocket: WebSocket, client_id: int):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            # data = await websocket.receive_text()
+            await manager.send_personal_message(f"You wrote: {data}", websocket)
+            await manager.broadcast(f"Client #{client_id} says: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast(f"Client #{client_id} left the chat")

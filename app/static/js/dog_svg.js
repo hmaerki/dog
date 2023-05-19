@@ -112,7 +112,7 @@ buttons.forEach(function (label, i) {
     }
   
     var msg = { room: DogApp.ROOM, event: 'buttonPressed', label: label};
-    DogApp.socket.emit("event", msg);
+    DogApp.socket.send(JSON.stringify({"event": msg}));
   });
 });
 
