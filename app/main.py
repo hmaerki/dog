@@ -62,20 +62,11 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-# @app.route("/")
-# def index():
-#     location = f"{flask.request.url_root}2/sandbox"
-#     return flask.redirect(location=location)
 @app.get("/")
 async def redirect_typer():
     return RedirectResponse("2/sandbox")
 
 
-# dogspiel.ch/<players>/<room>
-# @app.route("/<int:players>/<string:group>")
-# def index_room(players: int, group: str):
-#     game = rooms.initialize(players=players, group=group)
-#     return flask.render_template("index.html", game=game)
 @app.get("/{players}/{group}", response_class=HTMLResponse)
 async def index_room(request: Request, players: int, group: str):
     game = rooms.initialize(players=players, group=group)
@@ -87,52 +78,63 @@ async def index_room(request: Request, players: int, group: str):
 
 
 async def handler(websocket) -> None:
-    json_websocket = await websocket.receive_json()
-    json_event = json_websocket["event"]
-    assert isinstance(json_event, str)
-    json = json_websocket["msg"]
-    assert isinstance(json, dict)
+    json_msg = await websocket.receive_json()
+    event = json_msg["event"]
+    assert isinstance(event, str)
 
-    if json_event == "event":
-        if json["event"] == "browserConnected":
-            room = json["room"]
-            flask_socketio.join_room(room)
-
-        game = rooms.get(json)
-        game.event(json)
+    if event == "browserConnected":
+        game = rooms.get(json_msg)
+        game.gameState.event_browserConnected(json_msg)
         json_command = {}
         game.appendState(json_command)
         await websocket.send_json(json_command)
         return
 
-    if json_event == "marble":
+    if event == "newName":
+        game = rooms.get(json_msg)
+        game.gameState.event_newName(json_msg)
+        json_command = {}
+        game.appendState(json_command)
+        await websocket.send_json(json_command)
+        return
+
+    if event == "buttonPressed":
+        game = rooms.get(json_msg)
+        game.gameState.event_buttonPressed(json_msg)
+        json_command = {}
+        game.appendState(json_command)
+        await websocket.send_json(json_command)
+        return
+
+    if event == "marble":
         if DEBUG:
-            print(f"handleMoveMarble Json: {json}\n")
-        game = rooms.get(json)
-        id, x, y = json["marble"]
+            print(f"handleMoveMarble Json: {json_msg}\n")
+        game = rooms.get(json_msg)
+        id, x, y = json_msg["marble"]
         json_msg = game.moveMarble(id=id, x=x, y=y)
         # socketio.send(json_msg, json=True, broadcast=True, room=game.room)
         # Broadcast
         await websocket.send_json(json_msg)
         return
 
-    if json_event == "moveCard":
+    if event == "moveCard":
         if DEBUG:
-            print(f"handleMoveCard Json: {json}\n")
-        game = rooms.get(json)
-        id, x, y = json["card"]
+            print(f"handleMoveCard Json: {json_msg}\n")
+        game = rooms.get(json_msg)
+        id, x, y = json_msg["card"]
         json_msg = game.moveCard(id=id, x=x, y=y)
         # socketio.send(json_msg, json=True, broadcast=True, room=game.room)
         # Broadcast
         await websocket.send_json(json_msg)
         return
 
-    if json_event == "message":
+    if event == "message":
         if DEBUG:
-            print(f"Message: {json}\n")
+            print(f"Message: {json_msg}\n")
         # socketio.send(f"MESSAGE:{msg}", broadcast=True)
         # Broadcast
-        await websocket.send_json(f"MESSAGE:{json}", broadcast=True)
+        await websocket.send_json(f"MESSAGE:{json_msg}", broadcast=True)
+        return
 
 
 @app.websocket("/ws/{client_id}")

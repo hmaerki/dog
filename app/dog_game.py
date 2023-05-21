@@ -27,8 +27,6 @@ class PlayersCard:
         self.__angle = angle
         self.__x = x_initial
         self.__y = y_initial
-        self.__x_initial = x_initial
-        self.__y_initial = y_initial
         self.__card = card
 
     def move(self, x: int, y: int):
@@ -156,23 +154,21 @@ class GameState:
     def gameDirty(self):
         self.__game_dirty = True
 
-    def event(self, json: str) -> typing.Optional[str]:
-        if json["event"] == "browserConnected":
-            self.gameDirty()
-            return
+    def event_browserConnected(self, json: dict):
+        self.gameDirty()
 
-        if json["event"] == "newName":
-            idx = json["idx"]
-            name = json["name"]
-            self.list_player_names[idx] = name
-            self.gameDirty()
+    def event_newName(self, json: dict):
+        idx = json["idx"]
+        name = json["name"]
+        self.list_player_names[idx] = name
+        self.gameDirty()
 
-        if json["event"] == "buttonPressed":
-            label = json["label"]
-            method = f"button_{label.upper()}"
-            f = getattr(self, method)
-            assert f is not None
-            f()
+    def event_buttonPressed(self, json: dict):
+        label = json["label"]
+        method = f"button_{label.upper()}"
+        f = getattr(self, method)
+        assert f is not None
+        f()
 
     def appendState(self, json: dict) -> None:
         if self.__board_dirty:

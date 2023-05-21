@@ -45,9 +45,9 @@ var card_drag_move = function (dx, dy, mouseX, mouseY) {
   }
   var idstr = this.node.id.substring('card'.length)
   var idnum = parseInt(idstr)
-  var msg = {room: DogApp.ROOM, card: [idnum, cx|0, cy|0]}
+  var msg = {event: "moveCard", room: DogApp.ROOM, card: [idnum, cx|0, cy|0]}
   // console.log(msg)
-  DogApp.emit("moveCard", msg);
+  DogApp.emit(msg);
 }
 
 var card_drag_start = function () {
@@ -74,7 +74,7 @@ for (var i = 0; i < DogApp.PLAYER_COUNT; i++) {
         return
       }
       var msg = { room: DogApp.ROOM, event: 'newName', idx: idx, name: player_name};
-      DogApp.emit("event", msg);
+      DogApp.emit(msg);
     });
   }
 
@@ -112,7 +112,7 @@ buttons.forEach(function (label, i) {
     }
   
     var msg = { room: DogApp.ROOM, event: 'buttonPressed', label: label};
-    DogApp.emit("event", msg);
+    DogApp.emit(msg);
   });
 });
 
@@ -168,17 +168,14 @@ var move = function (dx, dy, mouseX, mouseY) {
   cy = DogApp.start_cy + dy2;
   // this.attr({ cx: cx, cy: cy });
 
-  // DogApp.emit("move", {id: this.id, cx: this.node.getAttribute("cx"), dx: dx});
-  // var move_msg = { id: this.node.id, cx: cx|0, cy: cy|0 }
-  // var move_msg = { id: this.node.id, x: cx|0, y: cy|0 }
   if (!this.node.id.startsWith('marble', 0))
   {
     console.log('WARNING: Does not start with "marble"!')
   }
   var idstr = this.node.id.substring('marble'.length)
   var idnum = parseInt(idstr)
-  var msg = {room: DogApp.ROOM, marble: [idnum, cx|0, cy|0] }
-  DogApp.emit("marble", msg);
+  var msg = {event: "marble", room: DogApp.ROOM, marble: [idnum, cx|0, cy|0] }
+  DogApp.emit(msg);
 }
 
 var start = function () {
