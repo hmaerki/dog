@@ -6,6 +6,8 @@ from fastapi.templating import Jinja2Templates
 
 from app import dog_game
 
+DEBUG = False
+
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -84,22 +86,62 @@ async def index_room(request: Request, players: int, group: str):
     return templates.TemplateResponse("index.html", context=context)
 
 
+async def handler(websocket) -> None:
+    json_websocket = await websocket.receive_json()
+    json_event = json_websocket["event"]
+    assert isinstance(json_event, str)
+    json = json_websocket["msg"]
+    assert isinstance(json, dict)
+
+    if json_event == "event":
+        if json["event"] == "browserConnected":
+            room = json["room"]
+            flask_socketio.join_room(room)
+
+        game = rooms.get(json)
+        game.event(json)
+        json_command = {}
+        game.appendState(json_command)
+        await websocket.send_json(json_command)
+        return
+
+    if json_event == "marble":
+        if DEBUG:
+            print(f"handleMoveMarble Json: {json}\n")
+        game = rooms.get(json)
+        id, x, y = json["marble"]
+        json_msg = game.moveMarble(id=id, x=x, y=y)
+        # socketio.send(json_msg, json=True, broadcast=True, room=game.room)
+        # Broadcast
+        await websocket.send_json(json_msg)
+        return
+
+    if json_event == "moveCard":
+        if DEBUG:
+            print(f"handleMoveCard Json: {json}\n")
+        game = rooms.get(json)
+        id, x, y = json["card"]
+        json_msg = game.moveCard(id=id, x=x, y=y)
+        # socketio.send(json_msg, json=True, broadcast=True, room=game.room)
+        # Broadcast
+        await websocket.send_json(json_msg)
+        return
+
+    if json_event == "message":
+        if DEBUG:
+            print(f"Message: {json}\n")
+        # socketio.send(f"MESSAGE:{msg}", broadcast=True)
+        # Broadcast
+        await websocket.send_json(f"MESSAGE:{json}", broadcast=True)
+
+
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: int):
     await manager.connect(websocket)
     try:
         while True:
-            json = await websocket.receive_json()
-            if json["event"] == "browserConnected":
-                room = json["room"]
-                flask_socketio.join_room(room)
+            await handler(websocket=websocket)
 
-            game = rooms.get(json["event"])
-            game.event(json)
-            json_command = {}
-            game.appendState(json_command)
-            # socketio.send(json_command, json=True, room=game.room)
-            await websocket.send_json(json_command)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast(f"Client #{client_id} left the chat")

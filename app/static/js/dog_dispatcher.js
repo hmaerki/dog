@@ -1,10 +1,9 @@
 
 $(document).ready(function () {
   DogApp.socket = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws/42');
-  // DogApp.socket.on('connect', function () {
-  //   var msg = { room: DogApp.ROOM, event: 'browserConnected' };
-  //   DogApp.socket.emit('event', msg);
-  // });
+  DogApp.emit = function (event, msg) {
+    DogApp.socket.send(JSON.stringify({"event": event, "msg": msg}));
+  }
 
   DogApp.socket.onmessage = function (e) {
     var json = JSON.parse(e.data);
