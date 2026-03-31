@@ -1,0 +1,58 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"[python]": {
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "charliermarsh.ruff"
+		},
+		"ruff.enable": true,
+		"ruff.fixAll": true,
+		"ruff.lint.enable": true,
+		"search.exclude": {
+			"**/.venv": true
+		},
+		"files.exclude": {
+			"**/.venv": true
+		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/*/**": true
+		}
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Run FastAPI",
+				"type": "debugpy",
+				"request": "launch",
+				"module": "uvicorn",
+				"args": [
+					"app.main:app",
+					"--host",
+					"0.0.0.0",
+					"--port",
+					"8000",
+					"--reload",
+					"--workers=1",
+					"--log-level=debug"
+				],
+				"cwd": "${workspaceFolder}",
+				"console": "integratedTerminal",
+				"jinja": true,
+				"justMyCode": true
+			}
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"charliermarsh.ruff",
+			"ms-python.python",
+		]
+	}
+}
