@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-  DogApp.socket = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws/42');
+  DogApp.socket = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws/' + DogApp.ROOM);
 
   DogApp.emit = function (msg) {
     DogApp.socket.send(JSON.stringify(msg));
