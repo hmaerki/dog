@@ -1,4 +1,3 @@
-import uvicorn
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -74,7 +73,7 @@ async def index_room(request: Request, players: int, group: str):
         request=request,
         game=game,
     )
-    return templates.TemplateResponse("index.html", context=context)
+    return templates.TemplateResponse(request, "index.html", context=context)
 
 
 async def handler(websocket) -> None:

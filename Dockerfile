@@ -1,21 +1,17 @@
-# Based on https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
-# Based on https://github.com/docker/awesome-compose/blob/master/fastapi/Dockerfile
-# syntax = docker/dockerfile:1.4
+# syntax=docker/dockerfile:1.4
 
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11-sim AS builder
-# FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11-slim AS builder
-# Git is missing in 'python3.11-slim'!
+FROM python:3.13-slim AS builder
 
 WORKDIR /app
 
-COPY ./app /app/app
-
-FROM builder as dev-envs
-
-COPY requirements*.txt .
+COPY pyproject.toml .
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir --upgrade \
-      -r requirements.txt \
-      -r requirements_dev.txt
+    && pip install --no-cache-dir .
 
-# CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+COPY ./app ./app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+
+FROM builder AS dev-envs
+
+RUN pip install --no-cache-dir ".[dev]"
