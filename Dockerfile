@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM python:3.13-slim AS builder
+FROM python:3.14-slim AS builder
 
 WORKDIR /app
 
@@ -14,4 +14,4 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
 
 FROM builder AS dev-envs
 
-RUN pip install --no-cache-dir ".[dev]"
+RUN pip install --no-cache-dir "."

@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 
 from app import dog_game
 
-DEBUG = True
+DEBUG = False
 
 app = FastAPI()
 
@@ -121,9 +121,11 @@ async def handler(websocket: WebSocket) -> None:
             print(f"handleMoveMarble Json: {json_msg}")
         room = rooms.get(json_msg)
         id, x, y = json_msg["marble"]
-        json_response = room.moveMarble(id=id, x=x, y=y)   
+        json_response = room.moveMarble(id=id, x=x, y=y)
         if DEBUG:
-            print(f"broadcast_room target={room.room!r} connections={list(manager.room_connections.keys())}\n")
+            print(
+                f"broadcast_room target={room.room!r} connections={list(manager.room_connections.keys())}\n"
+            )
         await manager.broadcast_room(json_response, room.room)
         return
 
@@ -151,15 +153,5 @@ async def websocket_endpoint(websocket: WebSocket, room: str):
         while True:
             await handler(websocket=websocket)
 
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-
-
-@app.websocket("/wsx/{room}")
-async def websocket_endpointx(websocket: WebSocket, room: str):
-    await manager.connect(websocket, room)
-    try:
-        while True:
-            await handler(websocket=websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)

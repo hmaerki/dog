@@ -3,79 +3,45 @@
 {
 	"name": "Python 3",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
+	"image": "mcr.microsoft.com/devcontainers/python:3.14",
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	"features": {
-		"ghcr.io/devcontainers/features/git:1": {
-			"version": "latest"
-		}
-	},
+	// "features": {
+	// 	"ghcr.io/devcontainers/features/git:1": {
+	// 		"version": "latest"
+	// 	}
+	// },
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
 		8000
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip install --user -r requirements.txt -r requirements_dev.txt",
+	"postCreateCommand": "pip install --upgrade pip; pip install --user .",
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"hediet.vscode-drawio",
-				"mhutchie.git-graph",
-				"ms-python.vscode-pylance",
-				"ms-python.python",
-				"ms-python.black-formatter",
-				"ms-python.isort",
-				"github.copilot",
-				"bierner.markdown-mermaid",
-				"joffreykern.markdown-toc",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"ms-python.python"
 			],
 			"settings": {
-				"python.formatting.provider": "black",
-				"python.linting.enabled": true,
-				"python.linting.pylintEnabled": false,
-				"python.linting.pylintArgs": [
-					"--rcfile=${workspaceFolder}/.pylintrc"
-				],
-				"python.linting.cwd": "${workspaceFolder}",
-				"python.linting.mypyEnabled": true,
-				// "python.testing.pytestArgs": [],
-				"python.testing.cwd": "${workspaceFolder}",
-				"python.testing.unittestEnabled": false,
-				"python.testing.pytestEnabled": true,
-				"python.linting.mypyArgs": [
-					"--config-file=${workspaceFolder}/.mypy.ini"
-				],
-				"ruff.organizeImports": true,
-				"ruff.fixAll": true,
-				"ruff.importStrategy": "fromEnvironment",
-				"ruff.args": [
-					"--config=${workspaceFolder}/.ruff.toml"
-				],
 				"[python]": {
-					"editor.defaultFormatter": "ms-python.black-formatter",
 					"editor.formatOnSave": true,
-					"editor.codeActionsOnSave": {
-						"source.fixAll": true,
-						"source.organizeImports": true
-					}
+					"editor.defaultFormatter": "charliermarsh.ruff"
 				},
-				// "isort.args": [
-				// 	"--profile",
-				// 	"black"
-				// ],
-				// "base", "forest", "dark", "default", "neutral"
-				"markdown-mermaid.lightModeTheme": "base",
-				"markdown-mermaid.darkModeTheme": "dark",
+				"ruff.enable": true,
+				"ruff.fixAll": true,
+				"ruff.lint.enable": true,
+				"search.exclude": {
+					"**/.venv": true
+				},
 				"files.exclude": {
-					"app/ui/*.py": true,
-					"app/uic/": true,
-					"**/__pycache__/": true,
-					"**/.mypy_cache/": true,
-					"**/.pytest_cache/": true
+					"**/.venv": true
 				},
-				"git.openRepositoryInParentFolders": "always",
+				"files.watcherExclude": {
+					"**/.git/objects/**": true,
+					"**/.git/subtree-cache/**": true,
+					"**/node_modules/*/**": true
+				},
 				"launch": {
 					// Use IntelliSense to learn about possible attributes.
 					// Hover to view descriptions of existing attributes.
@@ -83,16 +49,8 @@
 					"version": "0.2.0",
 					"configurations": [
 						{
-							// uvicorn.run(app, host="0.0.0.0", port=8000)
-							// CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
-							/*
-							0.00s - Debugger warning: It seems that frozen modules are being used, which may
-							0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
-							0.00s - to python to disable frozen modules.
-							0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
-							*/
 							"name": "Python: Dog (uvicorn)",
-							"type": "python",
+							"type": "debugpy",
 							"request": "launch",
 							"module": "uvicorn",
 							"args": [
@@ -103,18 +61,14 @@
 								"--workers=1",
 								"--log-level=debug"
 							],
-							"pythonArgs": [
-								"-Xfrozen_modules=off"
-							],
-							"env": {
-								"PYDEVD_DISABLE_FILE_VALIDATION": "1"
-							},
 							"cwd": "${workspaceFolder}",
-							"console": "integratedTerminal"
+							"console": "integratedTerminal",
+							"jinja": true,
+							"justMyCode": true
 						},
 						{
 							"name": "Python: Current File",
-							"type": "python",
+							"type": "debugpy",
 							"request": "launch",
 							"program": "${file}",
 							"console": "integratedTerminal"
