@@ -1,9 +1,16 @@
 from __future__ import annotations
 
 import dataclasses
+import enum
 from collections.abc import Callable, Iterator
 
-COLOURS = ("C", "D", "H", "S")
+
+class Colour(enum.StrEnum):
+    C = "C"
+    D = "D"
+    H = "H"
+    S = "S"
+    NONE = ""
 
 
 @dataclasses.dataclass
@@ -74,8 +81,7 @@ JOKER = CardDef(
 
 
 class Card:
-    def __init__(self, card_def: CardDef, color: str):
-        assert color in ("",) + COLOURS
+    def __init__(self, card_def: CardDef, color: Colour):
         self.__card_def = card_def
         self.__color = color
 
@@ -100,11 +106,11 @@ class Cards:
     @classmethod
     def create_cards(cls) -> Iterator[Card]:
         for _set in range(2):  # Two sets
-            for color in COLOURS:  # Four colours
+            for color in (Colour.C, Colour.D, Colour.H, Colour.S):  # Four colours
                 for card_def in LIST_4_COLOURS:
                     yield Card(card_def, color)
             for _jokers in range(3):  # 3 Jokers
-                yield Card(JOKER, "")
+                yield Card(JOKER, Colour.NONE)
 
     @classmethod
     def all_cards(cls) -> list[Card]:
