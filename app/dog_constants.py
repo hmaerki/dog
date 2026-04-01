@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import pathlib
-import random as r
 from collections.abc import Sequence
 import dataclasses
+import random
 
 DIRECTORY_OF_THIS_FILE = pathlib.Path(__file__).parent.absolute()
 
@@ -120,12 +120,12 @@ class DogRandom:
     def shuffle(self, elements: list) -> None:
         if self.__mock_mode:
             return
-        r.shuffle(elements)
+        random.shuffle(elements)
 
     def randint(self, a: int, b: int) -> int:
         if self.__mock_mode:
             return a
-        return r.randint(a, b)
+        return random.randint(a, b)
 
 
 DOG_RANDOM: DogRandom = DogRandom()

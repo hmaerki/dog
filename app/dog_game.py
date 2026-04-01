@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import logging
 import math
 
@@ -12,88 +13,99 @@ dog_patch_cards.CardsPatcher().convert_cards()
 INITIAL_NAME = ("Asterix", "Obelix", "Trubadix", "Idefix")
 
 
+@dataclasses.dataclass
 class PlayersCard:
-    def __init__(
-        self,
-        game_state: GameState,
-        jid: int,
-        angle: int,
-        x_initial: int,
-        y_initial: int,
-        card: dog_card_def.CardDefColor,
-    ):
-        self.id = jid
-        self._game_state = game_state
-        self._order = self._game_state.next_order()
-        self._angle = angle
-        self._x = x_initial
-        self._y = y_initial
-        self._card = card
+    game_state: GameState
+    id: int
+    angle: int
+    card_def_color: dog_card_def.CardDefColor
+    x: int
+    y: int
+    order: int = 0
+
+    def __post_init__(self) -> None:
+        self.order = self.game_state.next_order()
+        assert isinstance(self.id, int)
+        assert isinstance(self.angle, int)
+        assert isinstance(self.x, int)
+        assert isinstance(self.y, int)
+        assert isinstance(self.card_def_color, dog_card_def.CardDefColor)
 
     def move(self, x: int, y: int) -> None:
-        self._x = x
-        self._y = y
-        self._order = self._game_state.next_order()
+        self.x = x
+        self.y = y
+        self.order = self.game_state.next_order()
 
-    def set_card(self, card: dog_card_def.CardDefColor) -> None:
-        self._card = card
+    def set_card(self, card_def_color: dog_card_def.CardDefColor) -> None:
+        self.card_def_color = card_def_color
 
     @property
     def json_move(self) -> tuple[int, int, int, int]:
-        return (self.id, int(self._angle), int(self._x), int(self._y))
+        return (self.id, int(self.angle), int(self.x), int(self.y))
 
     @property
     def json_all(self) -> tuple[int, int, int, int, str, str]:
         return (
             self.id,
-            int(self._angle),
-            int(self._x),
-            int(self._y),
-            self._card.filebase,
-            self._card.description_i18n,
+            int(self.angle),
+            int(self.x),
+            int(self.y),
+            self.card_def_color.filebase,
+            self.card_def_color.description_i18n,
         )
 
     def __lt__(self, other: PlayersCard) -> bool:
         assert isinstance(other, PlayersCard)
-        return self._order < other._order
+        return self.order < other.order
 
     def __eq__(self, other: object) -> bool:
         assert isinstance(other, PlayersCard)
-        return self._order == other._order
+        return self.order == other.order
 
 
+@dataclasses.dataclass
 class Marble:
-    def __init__(self, jid: int):
-        self.id = jid
-        self.reset()
-        self.__x = 0
-        self.__y = 0
+    id: int
+    x: int = 0
+    y: int = 0
+
+    def __post_init__(self) -> None:
+        assert isinstance(self.id, int)
+        assert isinstance(self.x, int)
+        assert isinstance(self.y, int)
 
     def move(self, x: int, y: int) -> None:
-        self.__x = x
-        self.__y = y
+        self.x = x
+        self.y = y
 
     def reset(self) -> None:
-        self.__x = 2 * self.id
-        self.__y = 1 * self.id
+        self.x = 2 * self.id
+        self.y = 1 * self.id
 
     @property
     def json(self) -> tuple[int, int, int]:
-        return (self.id, int(self.__x), int(self.__y))
+        return (self.id, int(self.x), int(self.y))
 
 
+@dataclasses.dataclass
 class GameState:
-    def __init__(self, game: Game, room: str):
-        self.game: Game = game
-        self.room: str = room
-        self.__order: int = 0
-        self.__list_marbles: list[Marble] = [
-            Marble(id) for id in range(self.dgc.player_count * dog_constants.MARBLE_COUNT)
-        ]
+    game: Game
+    room: str
+    _order: int = 0
+    _list_marbles: list[Marble] = []
+    _game_dirty: bool = False
+    _board_dirty: bool = False
+    _list_cards: list[PlayersCard] = []
+
+    def __post_init__(self) -> None:
+        self._list_marbles = [Marble(id) for id in range(self.dgc.player_count * dog_constants.MARBLE_COUNT)]
+        assert isinstance(self.room, str)
+        assert isinstance(self._order, int)
+        assert isinstance(self._list_marbles, list)
+        assert isinstance(self._game_dirty, bool)
+        assert isinstance(self._board_dirty, bool)
+        assert isinstance(self._list_cards, list)
         self.reset()
-        self.__game_dirty: bool = False
-        self.__board_dirty: bool = False
-        self.__list_cards: list[PlayersCard] = []
 
     @property
     def dgc(self) -> dog_constants.DogGameConstants:
@@ -103,24 +115,20 @@ class GameState:
     def dbc(self) -> dog_constants.DogBoardConstants:
         return self.game.dbc
 
-    # @property
-    # def card_filebases(self) -> list:
-    #     return ';'.join([card.filebase for card in self.cards.all])
-
     def reset(self) -> None:
-        self.__game_dirty = True
-        self.__board_dirty = True
+        self._game_dirty = True
+        self._board_dirty = True
         self.list_player_names: list[str] = list(self.dgc.player_names_defaults)
-        self.__list_cards = []
-        for marble in self.__list_marbles:
+        self._list_cards = []
+        for marble in self._list_marbles:
             marble.reset()
 
         # self.__initializeCards()
         # self.__initializeMarbles()
 
     def next_order(self) -> int:
-        self.__order += 1
-        return self.__order
+        self._order += 1
+        return self._order
 
     def __initialize_cards(self, cards: int = 0) -> None:
         def generator():
@@ -136,28 +144,24 @@ class GameState:
                     card_center_rotated = math.e ** (complex(0, player_angle)) * card_center
                     x_initial = card_center_rotated.real
                     y_initial = card_center_rotated.imag
-                    card = cardstack.pop_card()
+                    card_def_color = cardstack.pop_card()
                     yield PlayersCard(
                         game_state=self,
-                        jid=jid,
+                        id=jid,
                         angle=angle_deg,
-                        x_initial=x_initial,
-                        y_initial=y_initial,
-                        card=card,
+                        x=x_initial,
+                        y=y_initial,
+                        card_def_color=card_def_color,
                     )
 
-        self.__list_cards = list(generator())
-
-    # def __initialize_marbles(self) -> None:
-    #     for marble in self.__list_marbles:
-    #         marble.reset()
+        self._list_cards = list(generator())
 
     def board_dirty(self) -> None:
-        self.__game_dirty = True
-        self.__board_dirty = True
+        self._game_dirty = True
+        self._board_dirty = True
 
     def game_dirty(self) -> None:
-        self.__game_dirty = True
+        self._game_dirty = True
 
     def event_browser_connected(self, json: dict) -> None:
         self.game_dirty()
@@ -176,27 +180,27 @@ class GameState:
         f()
 
     def append_state(self, json: dict) -> None:
-        if self.__board_dirty:
+        if self._board_dirty:
             self.append_state_board(json)
             self.append_state_game(json)
             return
 
-        if self.__game_dirty:
+        if self._game_dirty:
             self.append_state_game(json)
             return
 
     def append_state_game(self, json: dict) -> None:
-        self.__game_dirty = False
+        self._game_dirty = False
         json["playerNames"] = self.list_player_names
 
-        self.__list_cards.sort()
-        json["cards"] = [card.json_all for card in self.__list_cards]
+        self._list_cards.sort()
+        json["cards"] = [card.json_all for card in self._list_cards]
 
-        json["marbles"] = [marble.json for marble in self.__list_marbles]
+        json["marbles"] = [marble.json for marble in self._list_marbles]
 
     def move_card(self, jid: int, x: int, y: int) -> dict:
         def find_card():
-            for card in self.__list_cards:
+            for card in self._list_cards:
                 if card.id == jid:
                     return card
             raise ValueError("Card not found")
@@ -206,12 +210,12 @@ class GameState:
         return {"card": card.json_move}
 
     def move_marble(self, jid: int, x: int, y: int) -> dict:
-        marble = self.__list_marbles[jid]
+        marble = self._list_marbles[jid]
         marble.move(x=x, y=y)
         return {"marble": marble.json}
 
     def append_state_board(self, json: dict) -> None:
-        self.__board_dirty = False
+        self._board_dirty = False
 
     def button_c(self) -> None:
         # Clean
