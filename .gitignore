@@ -67,4 +67,3 @@ target/
 venv
 *.swp
 MANIFEST
-.vscode
