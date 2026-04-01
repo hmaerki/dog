@@ -113,11 +113,9 @@ LIST_DOG_GAME_CONSTANTS = (
 class DogRandom:
     def __init__(self):
         self.__mock_mode = False
-        self.__mock_seed = 0
 
     def seed(self, a: int, mock_mode: bool) -> None:
         self.__mock_mode = mock_mode
-        self.__mock_seed = a
 
     def shuffle(self, elements: list) -> None:
         if self.__mock_mode:

@@ -51,6 +51,7 @@ disable = [
     "C0116", # missing-function-docstring
     "C0301", # line-too-long
     "R0902", # too-many-instance-attributes
+    "R0903", # too-few-public-methods
     "R0913", # too-many-arguments
     "R0917", # too-many-positional-arguments
     "W0613", # unused-argument

@@ -33,7 +33,7 @@ class Rooms:
         game = self.d.get(room, None)
         if game is not None:
             return game
-        # TODO: The game already exists. Broadcast a reset.
+        # The game already exists. Broadcast a reset.
         game = dog_game.Game(players=players, room=room)
         self.d[room] = game
         return game
@@ -82,10 +82,10 @@ async def redirect_typer() -> RedirectResponse:
 @app.get("/{players}/{group}", response_class=HTMLResponse)
 async def index_room(request: Request, players: int, group: str):
     game = rooms.initialize(players=players, group=group)
-    context = dict(
-        request=request,
-        game=game,
-    )
+    context = {
+        "request": request,
+        "game": game,
+    }
     return templates.TemplateResponse(request, "index.html", context=context)
 
 

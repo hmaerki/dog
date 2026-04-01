@@ -21,7 +21,7 @@ class CardsPatcher(xml.sax.saxutils.XMLFilterBase):
             # width="2.25in" height="3.5in"
             card_width = 45
             card_height = 70
-            attrs_dict: dict[str, str] = {key: value for key, value in attrs.items()}
+            attrs_dict: dict[str, str] = dict(attrs.items())
             attrs_dict["height"] = f"{card_height}"
             attrs_dict["width"] = f"{card_width}"
             attrs_dict["x"] = f"{-card_width / 2}"
@@ -30,7 +30,7 @@ class CardsPatcher(xml.sax.saxutils.XMLFilterBase):
             return
 
         if name == "rect":
-            self.__rect = {key: value for key, value in attrs.items()}
+            self.__rect = dict(attrs.items())
             self.__rect["stroke"] = "blue"
             self.__rect["stroke-width"] = "0"
             super().startElement(name, self.__rect)  # type: ignore[arg-type]

@@ -22,44 +22,44 @@ class PlayersCard:
         y_initial: int,
         card: dog_card_def.Card,
     ):
-        self.__game_state = game_state
         self.id = jid
-        self.__order = self.__game_state.next_order()
-        self.__angle = angle
-        self.__x = x_initial
-        self.__y = y_initial
-        self.__card = card
+        self._game_state = game_state
+        self._order = self._game_state.next_order()
+        self._angle = angle
+        self._x = x_initial
+        self._y = y_initial
+        self._card = card
 
     def move(self, x: int, y: int) -> None:
-        self.__x = x
-        self.__y = y
-        self.__order = self.__game_state.next_order()
+        self._x = x
+        self._y = y
+        self._order = self._game_state.next_order()
 
     def set_card(self, card: dog_card_def.Card) -> None:
-        self.__card = card
+        self._card = card
 
     @property
     def json_move(self) -> tuple[int, int, int, int]:
-        return (self.id, int(self.__angle), int(self.__x), int(self.__y))
+        return (self.id, int(self._angle), int(self._x), int(self._y))
 
     @property
     def json_all(self) -> tuple[int, int, int, int, str, str]:
         return (
             self.id,
-            int(self.__angle),
-            int(self.__x),
-            int(self.__y),
-            self.__card.filebase,
-            self.__card.description_i18n,
+            int(self._angle),
+            int(self._x),
+            int(self._y),
+            self._card.filebase,
+            self._card.description_i18n,
         )
 
     def __lt__(self, other: PlayersCard) -> bool:
-        return self.__order < other.__order
+        assert isinstance(other, PlayersCard)
+        return self._order < other._order
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, PlayersCard):
-            return NotImplemented  # type: ignore[return-value]
-        return self._PlayersCard__order == other._PlayersCard__order  # type: ignore[attr-defined]
+        assert isinstance(other, PlayersCard)
+        return self._order == other._order
 
 
 class Marble:
