@@ -1,65 +1,87 @@
 from __future__ import annotations
 
+import dataclasses
 from collections.abc import Callable, Iterator
 
 COLOURS = ("C", "D", "H", "S")
 
+
+@dataclasses.dataclass
+class Language:
+    name: str
+    description: str
+
+
+@dataclasses.dataclass
+class CardDef:
+    id: str
+    languages: dict[str, Language]
+
+
 LIST_4_COLOURS = (
     # https://docs.google.com/spreadsheets/d/1fnAL9Csg0xfkZqHPyxq1r5kL7MLX200DlCBzDXKeito/edit?usp=sharing
-    dict(id="2", german=dict(name="2", description="2 Felder vorwärts")),
-    dict(id="3", german=dict(name="3", description="3 Felder vorwärts")),
-    dict(id="4", german=dict(name="4", description="4 Felder vorwärts oder rückwärts")),
-    dict(id="5", german=dict(name="5", description="5 Felder vorwärts")),
-    dict(id="6", german=dict(name="6", description="6 Felder vorwärts")),
-    dict(
+    CardDef(id="2", languages={"german": Language(name="2", description="2 Felder vorwärts")}),
+    CardDef(id="3", languages={"german": Language(name="3", description="3 Felder vorwärts")}),
+    CardDef(id="4", languages={"german": Language(name="4", description="4 Felder vorwärts oder rückwärts")}),
+    CardDef(id="5", languages={"german": Language(name="5", description="5 Felder vorwärts")}),
+    CardDef(id="6", languages={"german": Language(name="6", description="6 Felder vorwärts")}),
+    CardDef(
         id="7",
-        german=dict(
-            name="7",
-            description="7 Eingelschritte vorwärts. Einzelschritte können auf verschiedene Kugeln aufgeteilt werden.",
-        ),
+        languages={
+            "german": Language(
+                name="7",
+                description="7 Eingelschritte vorwärts. Einzelschritte können auf verschiedene Kugeln aufgeteilt werden.",
+            )
+        },
     ),
-    dict(id="8", german=dict(name="8", description="8 Felder vorwärts")),
-    dict(id="9", german=dict(name="9", description="9 Felder vorwärts")),
-    dict(id="10", german=dict(name="10", description="10 Felder vorwärts")),
-    dict(
+    CardDef(id="8", languages={"german": Language(name="8", description="8 Felder vorwärts")}),
+    CardDef(id="9", languages={"german": Language(name="9", description="9 Felder vorwärts")}),
+    CardDef(id="10", languages={"german": Language(name="10", description="10 Felder vorwärts")}),
+    CardDef(
         id="ace",
-        german=dict(
-            name="Ass",
-            description="Eine Kugel zum Start bewegen oder 11 Felder vorwärts oder 1 Feld vorwärts",
-        ),
+        languages={
+            "german": Language(
+                name="Ass",
+                description="Eine Kugel zum Start bewegen oder 11 Felder vorwärts oder 1 Feld vorwärts",
+            )
+        },
     ),
-    dict(
+    CardDef(
         id="jack",
-        german=dict(name="Junge", description="Eigene Kugel mit einer fremden Kugel tauschen"),
+        languages={"german": Language(name="Junge", description="Eigene Kugel mit einer fremden Kugel tauschen")},
     ),
-    dict(id="queen", german=dict(name="Dame", description="12 Felder vorwärts")),
-    dict(
+    CardDef(id="queen", languages={"german": Language(name="Dame", description="12 Felder vorwärts")}),
+    CardDef(
         id="king",
-        german=dict(
-            name="König",
-            description="Eige Kugel zum Start bewegen oder 13 Felder vorwärts",
-        ),
+        languages={
+            "german": Language(
+                name="König",
+                description="Eige Kugel zum Start bewegen oder 13 Felder vorwärts",
+            )
+        },
     ),
 )
 
-JOKER = dict(
+JOKER = CardDef(
     id="joker",
-    german=dict(
-        name="Joker",
-        description="Karte nach Wunsch. Als letzte Karte zum Sieg darf der Joker nicht gelegt werden.",
-    ),
+    languages={
+        "german": Language(
+            name="Joker",
+            description="Karte nach Wunsch. Als letzte Karte zum Sieg darf der Joker nicht gelegt werden.",
+        )
+    },
 )
 
 
 class Card:
-    def __init__(self, dict_card: dict, color: str):
+    def __init__(self, card_def: CardDef, color: str):
         assert color in ("",) + COLOURS
-        self.__dict_card = dict_card
+        self.__card_def = card_def
         self.__color = color
 
     @property
     def id(self) -> str:
-        return self.__dict_card["id"]
+        return self.__card_def.id
 
     @property
     def filebase(self) -> str:
@@ -67,11 +89,11 @@ class Card:
 
     @property
     def name_i18n(self) -> str:
-        return self.__dict_card["german"]["name"]
+        return self.__card_def.languages["german"].name
 
     @property
     def description_i18n(self) -> str:
-        return self.__dict_card["german"]["description"]
+        return self.__card_def.languages["german"].description
 
 
 class Cards:
@@ -79,8 +101,8 @@ class Cards:
     def create_cards(cls) -> Iterator[Card]:
         for _set in range(2):  # Two sets
             for color in COLOURS:  # Four colours
-                for dict_card in LIST_4_COLOURS:
-                    yield Card(dict_card, color)
+                for card_def in LIST_4_COLOURS:
+                    yield Card(card_def, color)
             for _jokers in range(3):  # 3 Jokers
                 yield Card(JOKER, "")
 
@@ -88,7 +110,7 @@ class Cards:
     def all_cards(cls) -> list[Card]:
         return list(Cards.create_cards())
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__list_cards = Cards.all_cards()
 
     @property
@@ -110,8 +132,6 @@ class Cards:
         self.__list_cards = self.__list_cards[count:]
         return sorted(list_cards, key=lambda card: card.id)
 
-
-# ALL_CARDS = [Card(dict_card) for dict_card in Cards.create_cards()]
 
 if __name__ == "__main__":
     pass
