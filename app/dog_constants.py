@@ -130,4 +130,4 @@ class DogRandom:
         return r.randint(a, b)
 
 
-dogRandom: DogRandom = DogRandom()
+DOG_RANDOM: DogRandom = DogRandom()

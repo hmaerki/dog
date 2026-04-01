@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import enum
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 
 
 class Colour(enum.StrEnum):
@@ -102,41 +102,36 @@ class Card:
         return self.__card_def.languages["german"].description
 
 
-class Cards:
-    @classmethod
-    def create_cards(cls) -> Iterator[Card]:
-        for _set in range(2):  # Two sets
-            for color in (Colour.C, Colour.D, Colour.H, Colour.S):  # Four colours
-                for card_def in LIST_4_COLOURS:
-                    yield Card(card_def, color)
-            for _jokers in range(3):  # 3 Jokers
-                yield Card(JOKER, Colour.NONE)
-
-    @classmethod
-    def all_cards(cls) -> list[Card]:
-        return list(Cards.create_cards())
-
+class Cards(list[Card]):
     def __init__(self) -> None:
-        self.__list_cards = Cards.all_cards()
+        super().__init__(
+            Card(card_def, color)
+            for _set in range(2)
+            for color in (Colour.C, Colour.D, Colour.H, Colour.S)
+            for card_def in LIST_4_COLOURS
+        )
+        for _jokers in range(3):  # 3 Jokers
+            self.append(Card(JOKER, Colour.NONE))
 
     @property
-    def all(self) -> list[Card]:
-        return self.__list_cards
+    def all(self) -> Cards:
+        return self
 
     @property
-    def count(self) -> int:
-        return len(self.__list_cards)
+    def card_count(self) -> int:
+        return len(self)
 
-    def shuffle(self, f: Callable[[list[Card]], None]) -> None:
-        f(self.__list_cards)
+    def shuffle(self, f: Callable[[Cards], None]) -> None:
+        f(self)
 
     def pop_card(self) -> Card:
-        return self.__list_cards.pop()
+        return self.pop()
 
-    def pop_cards(self, count: int) -> list[Card]:
-        list_cards = self.__list_cards[:count]
-        self.__list_cards = self.__list_cards[count:]
-        return sorted(list_cards, key=lambda card: card.id)
+    def pop_cards(self, count: int) -> Cards:
+        result = Cards.__new__(Cards)
+        list.__init__(result, sorted(self[:count], key=lambda card: card.id))
+        del self[:count]
+        return result
 
 
 if __name__ == "__main__":

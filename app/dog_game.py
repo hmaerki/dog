@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import math
 
-from app import dog_cards, dog_constants, dog_patch_cards
+from app import dog_card_def, dog_constants, dog_patch_cards
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -20,7 +20,7 @@ class PlayersCard:
         angle: int,
         x_initial: int,
         y_initial: int,
-        card: dog_cards.Card,
+        card: dog_card_def.Card,
     ):
         self.__game_state = game_state
         self.id = jid
@@ -35,7 +35,7 @@ class PlayersCard:
         self.__y = y
         self.__order = self.__game_state.next_order()
 
-    def set_card(self, card: dog_cards.Card) -> None:
+    def set_card(self, card: dog_card_def.Card) -> None:
         self.__card = card
 
     @property
@@ -124,8 +124,8 @@ class GameState:
 
     def __initialize_cards(self, cards: int = 0) -> None:
         def generator():
-            cardstack = dog_cards.Cards()
-            cardstack.shuffle(dog_constants.dogRandom.shuffle)
+            cardstack = dog_card_def.Cards()
+            cardstack.shuffle(dog_constants.DOG_RANDOM.shuffle)
             for player_index in range(self.dgc.player_count):
                 angle_deg = 360.0 * player_index / self.dgc.player_count
                 player_angle = 2 * math.pi * player_index / self.dgc.player_count

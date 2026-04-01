@@ -123,8 +123,8 @@ async def handler(websocket: WebSocket) -> None:
         if DEBUG:
             print(f"handleMoveMarble Json: {json_msg}")
         room = rooms.get(json_msg)
-        id, x, y = json_msg["marble"]
-        json_response = room.move_marble(jid=id, x=x, y=y)
+        jid, x, y = json_msg["marble"]
+        json_response = room.move_marble(jid=jid, x=x, y=y)
         if DEBUG:
             print(f"broadcast_room target={room.room!r} connections={list(manager.room_connections.keys())}\n")
         await manager.broadcast_room(json_response, room.room)
@@ -134,8 +134,8 @@ async def handler(websocket: WebSocket) -> None:
         if DEBUG:
             print(f"handleMoveCard Json: {json_msg}")
         room = rooms.get(json_msg)
-        id, x, y = json_msg["card"]
-        json_response = room.move_card(jid=id, x=x, y=y)
+        jid, x, y = json_msg["card"]
+        json_response = room.move_card(jid=jid, x=x, y=y)
         await manager.broadcast_room(json_response, room.room)
         return
 

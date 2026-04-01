@@ -42,15 +42,15 @@ class CardsPatcher(xml.sax.saxutils.XMLFilterBase):
         if not DIRECTORY_CARDS_NEW.exists():
             DIRECTORY_CARDS_NEW.mkdir(parents=True)
 
-        for filenameOri in DIRECTORY_CARDS_ORI.glob("*.svg"):
-            filenameNew = DIRECTORY_CARDS_NEW.joinpath(filenameOri.name)
-            # print(f'*** {filenameOri} -> {filenameNew}')
+        for filename_ori in DIRECTORY_CARDS_ORI.glob("*.svg"):
+            filename_new = DIRECTORY_CARDS_NEW.joinpath(filename_ori.name)
+            # print(f'*** {filename_ori} -> {filename_new}')
 
             reader = CardsPatcher()
-            with filenameNew.open("w", encoding="utf-8") as f:
+            with filename_new.open("w", encoding="utf-8") as f:
                 handler = xml.sax.saxutils.XMLGenerator(f, encoding="utf-8")
                 reader.setContentHandler(handler)
-                reader.parse(str(filenameOri))
+                reader.parse(str(filename_ori))
 
 
 if __name__ == "__main__":
