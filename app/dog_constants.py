@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 import pathlib
 import random as r
+from collections.abc import Sequence
+from types import ModuleType
 
 from app import dog_constants_4, dog_constants_6
 
@@ -18,7 +22,7 @@ BOARD_DIAMETER = 2000
 
 
 class DogBoardConstants:
-    def __init__(self, dbc_module: "module"):
+    def __init__(self, dbc_module: ModuleType):
         self.BOARD_ID = dbc_module.BOARD_ID
         assert self.BOARD_ID in LIST_BOARD_ID
         self.SCALE = dbc_module.SCALE
@@ -33,13 +37,20 @@ class DogBoardConstants:
 
 class DogGameConstants:
     def __init__(
-        self, player_count: int, dbc_module: "module", player_names_default: list
+        self,
+        player_count: int,
+        dbc_module: ModuleType | DogBoardConstants,
+        player_names_default: Sequence[str],
     ):
         assert player_count in LIST_PLAYER_COUNT
 
         self.PLAYER_COUNT = player_count
         self.PLAYER_NAMES_DEFAULTS = player_names_default
-        self.dbc = DogBoardConstants(dbc_module)
+        self.dbc = (
+            dbc_module
+            if isinstance(dbc_module, DogBoardConstants)
+            else DogBoardConstants(dbc_module)
+        )
 
         # Copy from globals
         self.BOARD_CENTER = BOARD_CENTER

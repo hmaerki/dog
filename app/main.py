@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -14,18 +16,19 @@ templates = Jinja2Templates(directory="app/templates")
 
 
 class Rooms:
-    def __init__(self):
-        self.d = {}
+    def __init__(self) -> None:
+        self.d: dict[str, dog_game.Game] = {}
 
-    def get(self, json: dict):
+    def get(self, json: dict[str, object]) -> dog_game.Game:
         room = json["room"]
+        assert isinstance(room, str)
         game = self.d.get(room, None)
         if game is not None:
             return game
         players, group = room.split("-", 2)
         return self.initialize(players=int(players), group=group)
 
-    def initialize(self, players: int, group: str):
+    def initialize(self, players: int, group: str) -> dog_game.Game:
         room = f"{players}-{group}"
         game = self.d.get(room, None)
         if game is not None:
@@ -40,20 +43,20 @@ rooms = Rooms()
 
 
 class ConnectionManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.room_connections: dict[str, list[WebSocket]] = {}
 
-    async def connect(self, websocket: WebSocket, room: str):
+    async def connect(self, websocket: WebSocket, room: str) -> None:
         await websocket.accept()
         self.room_connections.setdefault(room, []).append(websocket)
 
-    def disconnect(self, websocket: WebSocket):
+    def disconnect(self, websocket: WebSocket) -> None:
         for connections in self.room_connections.values():
             if websocket in connections:
                 connections.remove(websocket)
                 return
 
-    def move_to_game_room(self, websocket: WebSocket, game_room: str):
+    def move_to_game_room(self, websocket: WebSocket, game_room: str) -> None:
         """Re-register a websocket under the authoritative game room."""
         # Remove from any existing room
         for connections in self.room_connections.values():
@@ -63,7 +66,7 @@ class ConnectionManager:
         # Add to game room
         self.room_connections.setdefault(game_room, []).append(websocket)
 
-    async def broadcast_room(self, json_data: dict, room: str):
+    async def broadcast_room(self, json_data: dict[str, object], room: str) -> None:
         for connection in list(self.room_connections.get(room, [])):
             await connection.send_json(json_data)
 
@@ -72,7 +75,7 @@ manager = ConnectionManager()
 
 
 @app.get("/")
-async def redirect_typer():
+async def redirect_typer() -> RedirectResponse:
     return RedirectResponse("2/sandbox")
 
 
@@ -95,25 +98,25 @@ async def handler(websocket: WebSocket) -> None:
         room = rooms.get(json_msg)
         manager.move_to_game_room(websocket, room.room)
         room.gameState.event_browserConnected(json_msg)
-        json_command = {}
-        room.appendState(json_command)
-        await websocket.send_json(json_command)
+        browser_connected_command: dict[str, object] = {}
+        room.appendState(browser_connected_command)
+        await websocket.send_json(browser_connected_command)
         return
 
     if event == "newName":
         room = rooms.get(json_msg)
         room.gameState.event_newName(json_msg)
-        json_command = {}
-        room.appendState(json_command)
-        await manager.broadcast_room(json_command, room.room)
+        new_name_command: dict[str, object] = {}
+        room.appendState(new_name_command)
+        await manager.broadcast_room(new_name_command, room.room)
         return
 
     if event == "buttonPressed":
         room = rooms.get(json_msg)
         room.gameState.event_buttonPressed(json_msg)
-        json_command = {}
-        room.appendState(json_command)
-        await manager.broadcast_room(json_command, room.room)
+        button_pressed_command: dict[str, object] = {}
+        room.appendState(button_pressed_command)
+        await manager.broadcast_room(button_pressed_command, room.room)
         return
 
     if event == "marble":

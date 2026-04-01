@@ -10,11 +10,39 @@ dependencies = [
 dev = [
     "mypy",
     "ruff",
-    "pytest",
+    "pylint",
 ]
+
+[tool.ruff]
+exclude = [
+    "experiments/*",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "__pypackages__",
+    "_build",
+]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F"]
+ignore = [
+    "E501", # Line too long
+    "E741",
+]
+fixable = ["A", "B", "C", "D", "E", "F"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
+
+[tool.mypy]
+exclude = "static/"
 
 [build-system]
 requires = ["hatchling"]

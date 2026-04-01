@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 BOARD_ID = 6
 
 

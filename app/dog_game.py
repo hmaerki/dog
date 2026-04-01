@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import logging
 import math
-import typing
 
 from app import dog_cards, dog_constants, dog_patch_cards
 
@@ -14,7 +15,7 @@ INITIAL_NAME = ("Asterix", "Obelix", "Trubadix", "Idefix")
 class PlayersCard:
     def __init__(
         self,
-        gameState: "GameState",
+        gameState: GameState,
         id: int,
         angle: int,
         x_initial: int,
@@ -78,7 +79,7 @@ class Marble:
 
 
 class GameState:
-    def __init__(self, game: "Game", room: str):
+    def __init__(self, game: Game, room: str):
         self.game = game
         self.room = room
         self.__order = 0
@@ -95,7 +96,7 @@ class GameState:
         return self.game.dgc
 
     @property
-    def dbc(self) -> dog_constants.DogGameConstants:
+    def dbc(self) -> dog_constants.DogBoardConstants:
         return self.game.dbc
 
     # @property
@@ -106,7 +107,7 @@ class GameState:
         self.__game_dirty = True
         self.__board_dirty = True
         self.list_player_names = list(self.dgc.PLAYER_NAMES_DEFAULTS)
-        self.__list_cards = []
+        self.__list_cards: list[PlayersCard] = []
         for marble in self.__list_marbles:
             marble.reset()
 
@@ -245,9 +246,6 @@ class Game:
         self.dgc = getDgc(players)
         self.gameState = GameState(self, room)
         self.gameState.boardDirty()
-
-    def event(self, json: str) -> typing.Optional[str]:
-        return self.gameState.event(json)
 
     def appendState(self, json: dict) -> None:
         self.gameState.appendState(json)

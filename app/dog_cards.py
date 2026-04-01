@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 COLOURS = ("C", "D", "H", "S")
 
 LIST_4_COLOURS = (

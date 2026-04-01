@@ -4,6 +4,71 @@
 			"path": "."
 		}
 	],
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "pip upgrade",
+				"type": "shell",
+				"command": "uv pip install --no-deps --no-cache --upgrade -e .",
+				"problemMatcher": []
+			},
+			{
+				"label": "static check",
+				"type": "shell",
+				"command": "echo DONE",
+				"problemMatcher": [],
+				"dependsOn": [
+					"ruff",
+					"mypy",
+					"pylint",
+				],
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				}
+			},
+			{
+				"label": "ruff",
+				"type": "shell",
+				"command": ". .venv/bin/activate && ruff check --config pyproject.toml --fix || true",
+				"options": {
+					"cwd": "${workspaceFolder}"
+				},
+				"problemMatcher": [],
+				"group": {
+					"kind": "build",
+					"isDefault": false
+				}
+			},
+			{
+				"label": "mypy",
+				"type": "shell",
+				"command": ". .venv/bin/activate && python -m mypy --config-file pyproject.toml app || true",
+				"options": {
+					"cwd": "${workspaceFolder}"
+				},
+				"problemMatcher": [],
+				"group": {
+					"kind": "build",
+					"isDefault": false
+				}
+			},
+			{
+				"label": "pylint",
+				"type": "shell",
+				"command": ". .venv/bin/activate && PYTHONPATH=${workspaceFolder} python -m pylint app || true",
+				"options": {
+					"cwd": "${workspaceFolder}"
+				},
+				"problemMatcher": [],
+				"group": {
+					"kind": "build",
+					"isDefault": false
+				}
+			},
+		]
+	},
 	"settings": {
 		"[python]": {
 			"editor.formatOnSave": true,
