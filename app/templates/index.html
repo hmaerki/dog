@@ -19,11 +19,11 @@
 <body>
   <script type="text/javascript">
     var DogApp = {
-      ROOM: "{{ game.gameState.room }}",
-      BOARD_ID: {{ game.dbc.BOARD_ID }},
-      PLAYER_COUNT: {{ game.dgc.PLAYER_COUNT }},
-      CARD_HEIGHT: {{ game.dbc.CARD_SIZE.imag }},
-      CARD_WIDTH: {{ game.dbc.CARD_SIZE.real }},
+      ROOM: {{ game.game_state.room }},
+      BOARD_ID: {{ game.dbc.board_id }},
+      PLAYER_COUNT: {{ game.dgc.player_count }},
+      CARD_HEIGHT: {{ game.dbc.card_size.imag }},
+      CARD_WIDTH: {{ game.dbc.card_size.real }},
       playerIndex: 0,
     };
   </script>

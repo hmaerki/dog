@@ -97,7 +97,7 @@ async def handler(websocket: WebSocket) -> None:
     if event == "browserConnected":
         room = rooms.get(json_msg)
         manager.move_to_game_room(websocket, room.room)
-        room.gameState.event_browserConnected(json_msg)
+        room.game_state.event_browser_connected(json_msg)
         browser_connected_command: dict[str, object] = {}
         room.append_state(browser_connected_command)
         await websocket.send_json(browser_connected_command)
@@ -105,7 +105,7 @@ async def handler(websocket: WebSocket) -> None:
 
     if event == "newName":
         room = rooms.get(json_msg)
-        room.gameState.event_newName(json_msg)
+        room.game_state.event_new_name(json_msg)
         new_name_command: dict[str, object] = {}
         room.append_state(new_name_command)
         await manager.broadcast_room(new_name_command, room.room)
@@ -113,7 +113,7 @@ async def handler(websocket: WebSocket) -> None:
 
     if event == "buttonPressed":
         room = rooms.get(json_msg)
-        room.gameState.event_buttonPressed(json_msg)
+        room.game_state.event_button_pressed(json_msg)
         button_pressed_command: dict[str, object] = {}
         room.append_state(button_pressed_command)
         await manager.broadcast_room(button_pressed_command, room.room)
@@ -124,7 +124,7 @@ async def handler(websocket: WebSocket) -> None:
             print(f"handleMoveMarble Json: {json_msg}")
         room = rooms.get(json_msg)
         id, x, y = json_msg["marble"]
-        json_response = room.move_marble(id=id, x=x, y=y)
+        json_response = room.move_marble(jid=id, x=x, y=y)
         if DEBUG:
             print(f"broadcast_room target={room.room!r} connections={list(manager.room_connections.keys())}\n")
         await manager.broadcast_room(json_response, room.room)
@@ -135,7 +135,7 @@ async def handler(websocket: WebSocket) -> None:
             print(f"handleMoveCard Json: {json_msg}")
         room = rooms.get(json_msg)
         id, x, y = json_msg["card"]
-        json_response = room.moveCard(id=id, x=x, y=y)
+        json_response = room.move_card(jid=id, x=x, y=y)
         await manager.broadcast_room(json_response, room.room)
         return
 

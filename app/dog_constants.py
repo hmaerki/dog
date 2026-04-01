@@ -7,8 +7,6 @@ import dataclasses
 
 DIRECTORY_OF_THIS_FILE = pathlib.Path(__file__).parent.absolute()
 
-# COUNT_PLAYER_CARDS_OBSOLETE = 6
-
 MAX_PLAYERS = 6
 MAX_CARDS_PER_PLAYER = 6
 MARBLE_COUNT = 4
@@ -21,21 +19,18 @@ BOARD_DIAMETER = 2000
 
 @dataclasses.dataclass
 class DogBoardConstants:
-    BOARD_ID: int
-    SCALE: float
-    MARBLE_DIAMETER: float
-    CARD_SIZE: complex
-    LIST_CARD_CENTER: tuple[complex, ...]
-    OPACITY_PARAM_D: float
-    OPACITY_PARAM_B: float
-    OPACITY_PARAM_J: float
+    board_id: int
+    scale: float
+    marble_diameter: float
+    card_size: complex
+    list_card_center: tuple[complex, ...]
+    opacity_param_d: float
+    opacity_param_b: float
+    opacity_param_j: float
 
     @property
-    def BOARD_DIRECTORY_RELATIVE(self):
-        return DIRECTORY_OF_THIS_FILE / "static" / f"board{self.BOARD_ID}"
-
-
-# Imported after DogBoardConstants to avoid circular imports
+    def board_directory_relative(self) -> pathlib.Path:
+        return DIRECTORY_OF_THIS_FILE / "static" / f"board{self.board_id}"
 
 
 class DogGameConstants:
@@ -47,21 +42,21 @@ class DogGameConstants:
     ):
         assert player_count in LIST_PLAYER_COUNT
 
-        self.PLAYER_COUNT = player_count
-        self.PLAYER_NAMES_DEFAULTS = player_names_default
-        self.dbc = dbc
+        self.player_count: int = player_count
+        self.player_names_defaults: Sequence[str] = player_names_default
+        self.dbc: DogBoardConstants = dbc
 
         # Copy from globals
-        self.BOARD_CENTER = BOARD_CENTER
-        self.BOARD_DIAMETER = BOARD_DIAMETER
+        self.board_center: tuple[int, int] = BOARD_CENTER
+        self.board_diameter: int = BOARD_DIAMETER
 
 
 DOG_BOARD_CONSTANTS_4 = DogBoardConstants(
-    BOARD_ID=4,
-    SCALE=0.563380281690141,
-    MARBLE_DIAMETER=9.01408450704225,
-    CARD_SIZE=complex(31.5492957746479, 50.1408450704225),
-    LIST_CARD_CENTER=(
+    board_id=4,
+    scale=0.563380281690141,
+    marble_diameter=9.01408450704225,
+    card_size=complex(31.5492957746479, 50.1408450704225),
+    list_card_center=(
         complex(-22.5352112676056, 132.957746478873),
         complex(22.5352112676056, 132.957746478873),
         complex(-47.3239436619718, 126.760563380282),
@@ -69,18 +64,18 @@ DOG_BOARD_CONSTANTS_4 = DogBoardConstants(
         complex(-69.2957746478873, 119.43661971831),
         complex(69.2957746478873, 119.43661971831),
     ),
-    OPACITY_PARAM_D=28.169014084507,
-    OPACITY_PARAM_B=107.042253521127,
-    OPACITY_PARAM_J=90.1408450704225,
+    opacity_param_d=28.169014084507,
+    opacity_param_b=107.042253521127,
+    opacity_param_j=90.1408450704225,
 )
 
 
 DOG_BOARD_CONSTANTS_6 = DogBoardConstants(
-    BOARD_ID=6,
-    SCALE=0.43956043956044,
-    MARBLE_DIAMETER=7.03296703296703,
-    CARD_SIZE=complex(24.6153846153846, 39.1208791208791),
-    LIST_CARD_CENTER=(
+    board_id=6,
+    scale=0.43956043956044,
+    marble_diameter=7.03296703296703,
+    card_size=complex(24.6153846153846, 39.1208791208791),
+    list_card_center=(
         complex(-13.1868131868132, 132.747252747253),
         complex(13.1868131868132, 132.747252747253),
         complex(-29.8901098901099, 126.153846153846),
@@ -88,9 +83,9 @@ DOG_BOARD_CONSTANTS_6 = DogBoardConstants(
         complex(-44.3956043956044, 120.879120879121),
         complex(44.3956043956044, 120.879120879121),
     ),
-    OPACITY_PARAM_D=45.0704225352113,
-    OPACITY_PARAM_B=84.5070422535211,
-    OPACITY_PARAM_J=126.760563380282,
+    opacity_param_d=45.0704225352113,
+    opacity_param_b=84.5070422535211,
+    opacity_param_j=126.760563380282,
 )
 
 DOG_GAME_CONSTANTS_2 = DogGameConstants(
@@ -117,22 +112,22 @@ LIST_DOG_GAME_CONSTANTS = (
 
 class DogRandom:
     def __init__(self):
-        self.__mockMode = False
-        self.__mockSeed = 0
+        self.__mock_mode = False
+        self.__mock_seed = 0
 
-    def seed(self, a, mockMode: bool) -> None:
-        self.__mockMode = mockMode
-        self.__mockSeed = a
+    def seed(self, a: int, mock_mode: bool) -> None:
+        self.__mock_mode = mock_mode
+        self.__mock_seed = a
 
     def shuffle(self, elements: list) -> None:
-        if self.__mockMode:
+        if self.__mock_mode:
             return
         r.shuffle(elements)
 
     def randint(self, a: int, b: int) -> int:
-        if self.__mockMode:
+        if self.__mock_mode:
             return a
         return r.randint(a, b)
 
 
-dogRandom = DogRandom()
+dogRandom: DogRandom = DogRandom()

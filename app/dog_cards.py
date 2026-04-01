@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator
+
 COLOURS = ("C", "D", "H", "S")
 
 LIST_4_COLOURS = (
@@ -28,9 +30,7 @@ LIST_4_COLOURS = (
     ),
     dict(
         id="jack",
-        german=dict(
-            name="Junge", description="Eigene Kugel mit einer fremden Kugel tauschen"
-        ),
+        german=dict(name="Junge", description="Eigene Kugel mit einer fremden Kugel tauschen"),
     ),
     dict(id="queen", german=dict(name="Dame", description="12 Felder vorwärts")),
     dict(
@@ -66,17 +66,17 @@ class Card:
         return f"{self.id}{self.__color}"
 
     @property
-    def nameI18N(self) -> str:
+    def name_i18n(self) -> str:
         return self.__dict_card["german"]["name"]
 
     @property
-    def descriptionI18N(self) -> str:
+    def description_i18n(self) -> str:
         return self.__dict_card["german"]["description"]
 
 
 class Cards:
     @classmethod
-    def create_cards(cls):
+    def create_cards(cls) -> Iterator[Card]:
         for _set in range(2):  # Two sets
             for color in COLOURS:  # Four colours
                 for dict_card in LIST_4_COLOURS:
@@ -85,27 +85,27 @@ class Cards:
                 yield Card(JOKER, "")
 
     @classmethod
-    def all_cards(cls):
+    def all_cards(cls) -> list[Card]:
         return list(Cards.create_cards())
 
     def __init__(self):
         self.__list_cards = Cards.all_cards()
 
     @property
-    def all(self) -> list:
+    def all(self) -> list[Card]:
         return self.__list_cards
 
     @property
-    def count(self):
+    def count(self) -> int:
         return len(self.__list_cards)
 
-    def shuffle(self, f):
+    def shuffle(self, f: Callable[[list[Card]], None]) -> None:
         f(self.__list_cards)
 
     def pop_card(self) -> Card:
         return self.__list_cards.pop()
 
-    def pop_cards(self, count: int) -> list:
+    def pop_cards(self, count: int) -> list[Card]:
         list_cards = self.__list_cards[:count]
         self.__list_cards = self.__list_cards[count:]
         return sorted(list_cards, key=lambda card: card.id)
