@@ -83,10 +83,7 @@ class GameState:
         self.game = game
         self.room = room
         self.__order = 0
-        self.__list_marbles = [
-            Marble(id)
-            for id in range(self.dgc.PLAYER_COUNT * dog_constants.MARBLE_COUNT)
-        ]
+        self.__list_marbles = [Marble(id) for id in range(self.dgc.PLAYER_COUNT * dog_constants.MARBLE_COUNT)]
         self.reset()
         self.__game_dirty = False
         self.__board_dirty = False
@@ -237,23 +234,23 @@ class GameState:
 
 class Game:
     def __init__(self, players: int, room: str):
-        def getDgc(playerCount):
+        def get_dgc(player_count):
             for dgc in dog_constants.LIST_DOG_GAME_CONSTANTS:
-                if dgc.PLAYER_COUNT == playerCount:
+                if dgc.PLAYER_COUNT == player_count:
                     return dgc
             return dog_constants.DOG_GAME_CONSTANTS_2
 
-        self.dgc = getDgc(players)
+        self.dgc = get_dgc(players)
         self.gameState = GameState(self, room)
         self.gameState.boardDirty()
 
-    def appendState(self, json: dict) -> None:
+    def append_state(self, json: dict) -> None:
         self.gameState.appendState(json)
 
     def moveCard(self, id: int, x: int, y: int) -> dict:
         return self.gameState.moveCard(id=id, x=x, y=y)
 
-    def moveMarble(self, id: int, x: int, y: int) -> dict:
+    def move_marble(self, id: int, x: int, y: int) -> dict:
         return self.gameState.moveMarble(id=id, x=x, y=y)
 
     @property

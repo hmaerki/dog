@@ -44,6 +44,11 @@ packages = ["app"]
 [tool.mypy]
 exclude = "static/"
 
+[tool.pylint.messages_control]
+disable = [
+    "C0116", # missing-function-docstring
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
