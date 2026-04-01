@@ -92,10 +92,10 @@ class GameState:
     game: Game
     room: str
     _order: int = 0
-    _list_marbles: list[Marble] = []
+    _list_marbles: list[Marble] = dataclasses.field(default_factory=list)
     _game_dirty: bool = False
     _board_dirty: bool = False
-    _list_cards: list[PlayersCard] = []
+    _list_cards: list[PlayersCard] = dataclasses.field(default_factory=list)
 
     def __post_init__(self) -> None:
         self._list_marbles = [Marble(id) for id in range(self.dgc.player_count * dog_constants.MARBLE_COUNT)]
