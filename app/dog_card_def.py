@@ -13,13 +13,13 @@ class Colour(enum.StrEnum):
     NONE = ""
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Language:
     name: str
     description: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True  )
 class CardDef:
     id: str
     languages: dict[str, Language]
@@ -79,39 +79,38 @@ JOKER = CardDef(
     },
 )
 
-
-class Card:
-    def __init__(self, card_def: CardDef, color: Colour):
-        self.__card_def = card_def
-        self.__color = color
+@dataclasses.dataclass(frozen=True)
+class CardDefColor:
+    card_def: CardDef
+    color: Colour
 
     @property
     def id(self) -> str:
-        return self.__card_def.id
+        return self.card_def.id
 
     @property
     def filebase(self) -> str:
-        return f"{self.id}{self.__color}"
+        return f"{self.id}{self.color}"
 
     @property
     def name_i18n(self) -> str:
-        return self.__card_def.languages["german"].name
+        return self.card_def.languages["german"].name
 
     @property
     def description_i18n(self) -> str:
-        return self.__card_def.languages["german"].description
+        return self.card_def.languages["german"].description
 
 
-class Cards(list[Card]):
+class Cards(list[CardDefColor]):
     def __init__(self) -> None:
         super().__init__(
-            Card(card_def, color)
+            CardDefColor(card_def, color)
             for _set in range(2)
             for color in (Colour.C, Colour.D, Colour.H, Colour.S)
             for card_def in LIST_4_COLOURS
         )
         for _jokers in range(3):  # 3 Jokers
-            self.append(Card(JOKER, Colour.NONE))
+            self.append(CardDefColor(JOKER, Colour.NONE))
 
     @property
     def all(self) -> Cards:
@@ -124,7 +123,7 @@ class Cards(list[Card]):
     def shuffle(self, f: Callable[[Cards], None]) -> None:
         f(self)
 
-    def pop_card(self) -> Card:
+    def pop_card(self) -> CardDefColor:
         return self.pop()
 
     def pop_cards(self, count: int) -> Cards:

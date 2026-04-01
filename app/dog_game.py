@@ -20,7 +20,7 @@ class PlayersCard:
         angle: int,
         x_initial: int,
         y_initial: int,
-        card: dog_card_def.Card,
+        card: dog_card_def.CardDefColor,
     ):
         self.id = jid
         self._game_state = game_state
@@ -35,7 +35,7 @@ class PlayersCard:
         self._y = y
         self._order = self._game_state.next_order()
 
-    def set_card(self, card: dog_card_def.Card) -> None:
+    def set_card(self, card: dog_card_def.CardDefColor) -> None:
         self._card = card
 
     @property
