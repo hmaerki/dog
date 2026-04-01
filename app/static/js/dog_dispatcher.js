@@ -1,7 +1,8 @@
 
 $(document).ready(function () {
   var wsProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
-  DogApp.socket = new WebSocket(wsProtocol + document.domain + ':' + location.port + '/ws/' + DogApp.ROOM);
+  var wsPort = location.port ? ':' + location.port : '';
+  DogApp.socket = new WebSocket(wsProtocol + document.domain + wsPort + '/ws/' + DogApp.ROOM);
 
   DogApp.emit = function (msg) {
     DogApp.socket.send(JSON.stringify(msg));

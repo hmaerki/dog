@@ -18,9 +18,9 @@ class PlayersCard:
     game_state: GameState
     id: int
     angle: int
-    card_def_color: dog_card_def.CardDefColor
     x: int
     y: int
+    card_def_color: dog_card_def.CardDefColor
     order: int = 0
 
     def __post_init__(self) -> None:
@@ -142,15 +142,13 @@ class GameState:
                     player_offset = 10  # The first player start with 10, then 20, ...
                     jid = player_offset * (1 + player_index) + card_index
                     card_center_rotated = math.e ** (complex(0, player_angle)) * card_center
-                    x_initial = card_center_rotated.real
-                    y_initial = card_center_rotated.imag
                     card_def_color = cardstack.pop_card()
                     yield PlayersCard(
                         game_state=self,
                         id=jid,
-                        angle=angle_deg,
-                        x=x_initial,
-                        y=y_initial,
+                        angle=int(angle_deg),
+                        x=int(card_center_rotated.real),
+                        y=int(card_center_rotated.imag),
                         card_def_color=card_def_color,
                     )
 
@@ -174,7 +172,7 @@ class GameState:
 
     def event_button_pressed(self, json: dict) -> None:
         label = json["label"]
-        method = f"button_{label.upper()}"
+        method = f"button_{label.lower()}"
         f = getattr(self, method)
         assert f is not None
         f()

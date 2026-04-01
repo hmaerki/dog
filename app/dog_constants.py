@@ -95,7 +95,7 @@ DOG_GAME_CONSTANTS_2 = DogGameConstants(
 )
 DOG_GAME_CONSTANTS_4 = DogGameConstants(
     4,
-    DOG_BOARD_CONSTANTS_6,
+    DOG_BOARD_CONSTANTS_4,
     ("Blau", "Gelb", "Grün", "Rot"),
 )
 DOG_GAME_CONSTANTS_6 = DogGameConstants(
