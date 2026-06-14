@@ -5,9 +5,9 @@ services:
       target: builder
     container_name: http_dog
     environment:
-      PORT: 80
+      PORT: 81
     ports:
-      - 0.0.0.0:80:80
-      # - 92.205.108.193:80:80
+      # - 0.0.0.0:80:80
+      - 37.148.200.75:81:80
     restart: "always"
 
